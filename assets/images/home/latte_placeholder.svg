@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 52 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Coffee Visual Variant / Hot Latte">
+<ellipse id="Saucer" opacity="0.34" cx="26" cy="37" rx="22" ry="5" fill="#C7B3A3"/>
+<rect id="Cup Body" x="7.7" y="12.7" width="32.6" height="20.6" rx="9.3" fill="#FFFDFB" stroke="#846B59" stroke-width="1.4"/>
+<ellipse id="Coffee Surface" opacity="0.82" cx="24" cy="15.5" rx="14" ry="3.5" fill="#5A4636"/>
+<circle id="Cup Handle" cx="42" cy="23" r="5.3" stroke="#846B59" stroke-width="1.4"/>
+<rect id="Steam 1" opacity="0.28" x="18" width="2" height="12" rx="1" fill="#846B59"/>
+<rect id="Steam 2" opacity="0.22" x="29" y="2" width="2" height="10" rx="1" fill="#846B59"/>
+</g>
+</svg>

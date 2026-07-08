@@ -26,7 +26,7 @@ class MobileAppFrame extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: AppColors.background,
-                borderRadius: BorderRadius.circular(AppRadius.large),
+                borderRadius: BorderRadius.circular(AppRadius.deviceFrame),
                 boxShadow: const [
                   BoxShadow(
                     color: AppColors.previewShadow,
@@ -36,7 +36,7 @@ class MobileAppFrame extends StatelessWidget {
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.large),
+                borderRadius: BorderRadius.circular(AppRadius.deviceFrame),
                 child: SizedBox(
                   width: AppDimensions.mobileViewportWidth,
                   height: AppDimensions.mobileViewportHeight,

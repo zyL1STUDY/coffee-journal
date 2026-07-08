@@ -54,7 +54,8 @@ class AppTheme {
           final isSelected = states.contains(WidgetState.selected);
           return TextStyle(
             color: isSelected ? AppColors.accent : AppColors.textSecondary,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            fontFamilyFallback: AppTypography.fontFamilyFallback,
           );
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {

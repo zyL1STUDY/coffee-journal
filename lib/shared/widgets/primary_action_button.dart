@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_dimensions.dart';
 import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 
 class PrimaryActionButton extends StatelessWidget {
   const PrimaryActionButton({required this.label, this.onPressed, super.key});
@@ -11,18 +13,32 @@ class PrimaryActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          shape: const RoundedRectangleBorder(borderRadius: AppRadius.button),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
+    return Semantics(
+      button: true,
+      label: label,
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Container(
+          width: double.infinity,
+          height: AppDimensions.buttonHeight,
+          decoration: const BoxDecoration(
+            color: AppColors.accent,
+            borderRadius: AppRadius.button,
+          ),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('+', style: AppTypography.ctaPlus),
+                const SizedBox(width: AppDimensions.buttonContentGap),
+                Text(
+                  label.replaceFirst('+ ', ''),
+                  style: AppTypography.ctaLabel,
+                ),
+              ],
+            ),
           ),
         ),
-        child: Text(label),
       ),
     );
   }
