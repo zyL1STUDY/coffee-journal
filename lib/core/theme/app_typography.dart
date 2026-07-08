@@ -27,6 +27,16 @@ class AppTypography {
         fontWeight: FontWeight.w400,
         color: AppColors.textSecondary,
       ),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textSecondary,
+      ),
+      labelMedium: TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textMuted,
+      ),
       labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
     );
   }

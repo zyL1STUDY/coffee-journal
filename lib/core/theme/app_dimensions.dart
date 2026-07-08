@@ -7,4 +7,6 @@ class AppDimensions {
 
   static const buttonHeight = 52.0;
   static const homeActionMaxWidth = 260.0;
+  static const bottomNavigationHeight = 76.0;
+  static const homeTodayCardMinHeight = 154.0;
 }

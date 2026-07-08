@@ -34,8 +34,8 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.accent,
-          foregroundColor: AppColors.background,
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.accent,
           minimumSize: const Size.fromHeight(AppDimensions.buttonHeight),
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,
@@ -47,7 +47,9 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.surface,
-        indicatorColor: AppColors.primary,
+        elevation: 0,
+        height: AppDimensions.bottomNavigationHeight,
+        indicatorColor: AppColors.primarySoft,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final isSelected = states.contains(WidgetState.selected);
           return TextStyle(

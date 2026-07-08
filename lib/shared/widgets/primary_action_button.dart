@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_spacing.dart';
+
 class PrimaryActionButton extends StatelessWidget {
   const PrimaryActionButton({required this.label, this.onPressed, super.key});
 
@@ -8,6 +11,19 @@ class PrimaryActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(onPressed: onPressed, child: Text(label));
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.button),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
+          ),
+        ),
+        child: Text(label),
+      ),
+    );
   }
 }
