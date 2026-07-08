@@ -166,3 +166,84 @@
 - 正式交付文档保持简洁，但不遗漏核心产品判断。
 - 用户不喜欢或不方便拍照时，记录流程必须允许跳过拍照。
 - 已通过 `03 Final Screens` 链接确认 Figma 中存在 9 个最终 MVP 画面；后续读取应使用 Final Screens 或具体画面链接。
+
+## 2026-07-08 Daily Development Log
+
+日期：2026-07-08
+
+今日完成内容：
+
+- 完成 Milestone 1「导航 + Home 基础 UI」开发，并提交基础版本。
+- 基于 Figma Final 和后续 Review，对 Home 页面做 UI Polish：
+  - 调整 Typography Token 到 Apple / PingFang 轻量方向。
+  - 优化 Today Card、AI 提示文案、Recent Coffee 卡片层级。
+  - 将 Recent Coffee 的咖啡图调整为 Sticker 风格，包含白边、轻微阴影和凸出卡片的视觉表现。
+  - 修复底部导航图案不显示的问题。
+- 为 Home 的 Recent Coffee 增加左滑操作：
+  - 支持编辑。
+  - 支持删除。
+  - 修复删除后下一张卡片错误继承左滑状态的问题。
+- 进入 Milestone 2「Record Flow」并完成记录流程基础闭环：
+  - Home 点击「记录一杯」后直接进入咖啡来源选择。
+  - 支持连锁品牌、独立咖啡店、自己做三种来源。
+  - 三个来源进入统一详情页结构。
+  - 品牌 / 来源未选择时，保存按钮禁用。
+  - 使用 Mock Repository 保存记录，保存后返回 Home。
+- 调整 Record Flow 的照片逻辑：
+  - 初始不预留照片高度。
+  - 点击「添加照片」后，在详情页标题下方展示 Sticker 预览。
+  - Sticker 预览风格与 Home Recent Coffee 保持一致。
+- 优化 Record Flow 退出逻辑：
+  - 增加右上角 `×` 取消入口。
+  - 空记录直接退出。
+  - 已填写内容时弹出轻量确认。
+  - 将 `×` 关闭改为 bottom sheet dismiss：向下滑动退出，背景 blur 同步淡出。
+- 更新并扩展 Widget Tests，覆盖保存、禁用按钮、照片预览、取消确认、左滑删除等关键路径。
+- 已运行并通过：
+  - `flutter analyze`
+  - `flutter test`
+
+新增或修改的 commit：
+
+- `14cdef3 feat: build navigation and home foundation`
+- 当前还有未提交改动，主要集中在 Home UI Polish、Record Flow foundation、Record Flow 取消 / dismiss 动效、测试覆盖、项目长期工作规则。
+
+遇到的问题：
+
+- 底部导航图案一度未显示。
+- Recent Coffee Sticker 放大后曾遮挡标题和其他卡片内容。
+- 删除第一条 Recent Coffee 后，下一条卡片错误保留左滑状态。
+- Record Flow 初版步骤过多，用户从拍照到详情页需要经过多个中转页面。
+- 详情页照片展示逻辑一度存在重复入口或不符合用户预期。
+- `×` 取消最初表现为普通页面切换，视觉上像左滑返回，不符合 bottom sheet 的空间逻辑。
+- 新启动预览端口前，浏览器曾显示旧版本页面，导致新加的 `×` 看起来没有出现。
+
+已解决的问题：
+
+- 修复底部导航图案显示。
+- 调整 Recent Coffee Sticker 尺寸、位置和卡片间距，避免遮挡文字和其他卡片。
+- 修复左滑状态在删除后错误继承的问题。
+- 将 Record Flow 收敛为：Home → 来源选择 → 详情页 → 保存 → Home。
+- 确认照片逻辑为：未添加时不占位，添加后在顶部展示 Sticker 预览。
+- 增加取消安全出口，并实现 bottom sheet 向下 dismiss。
+- 通过 `flutter analyze` 和 `flutter test` 验证当前改动。
+
+未解决问题：
+
+- Record Flow 目前仍使用 Mock Data，尚未接入真实数据库、相机、相册、AI 或 Supabase。
+- 当前 Sticker 仍为 mock 图片，真实拍照 / 相册后的抠图流程尚未实现。
+- Record Flow UI 还需要继续对照 Figma Final 做 Pixel Perfect 细调。
+- 当前改动尚未提交 Git，需要 Review 后再提交 Milestone 2 相关 commit。
+
+明日计划：
+
+- Review 当前 Record Flow 的视觉和动效。
+- 继续打磨来源选择页与详情页的 spacing、typography、button、safe area。
+- 确认照片入口未来接入真实拍照 / 相册时的交互状态。
+- Review 通过后再提交 Record Flow foundation commit。
+
+当前 Milestone 状态：
+
+- Milestone 1：导航 + Home 基础 UI，已完成并已提交。
+- Milestone 1.5：Home UI Polish，已基本完成，等待最终视觉确认。
+- Milestone 2：Record Flow foundation，核心闭环已完成，当前处于 Review / Polish 阶段，尚未提交。
