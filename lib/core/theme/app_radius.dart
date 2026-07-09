@@ -17,6 +17,10 @@ class AppRadius {
   static const recordCancelButton = 16.0;
   static const recordDiscardDialog = 26.0;
   static const recordDiscardDialogAction = 22.0;
+  static const latteGlass = 26.0;
+  static const journalDay = 8.0;
+  static const memoryNote = 18.0;
+  static const memoryAction = 23.0;
   static const large = 20.0;
   static const deviceFrame = 36.0;
   static const pill = 999.0;

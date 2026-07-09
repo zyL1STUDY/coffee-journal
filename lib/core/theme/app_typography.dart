@@ -199,6 +199,149 @@ class AppTypography {
     fontFamilyFallback: fontFamilyFallback,
   );
 
+  static const journalMonthTitle = TextStyle(
+    fontSize: 26,
+    fontWeight: FontWeight.w700,
+    height: 34 / 26,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalMonthSubtitle = TextStyle(
+    fontSize: 26,
+    fontWeight: FontWeight.w700,
+    height: 34 / 26,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalDescription = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+    height: 22 / 15,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalArrow = TextStyle(
+    fontSize: 28,
+    fontWeight: FontWeight.w400,
+    height: 28 / 28,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalWeekday = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    height: 18 / 13,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalDay = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    height: 18 / 14,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalToday = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    height: 18 / 14,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalTodayLabel = TextStyle(
+    fontSize: 8,
+    fontWeight: FontWeight.w500,
+    height: 10 / 8,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalBadge = TextStyle(
+    fontSize: 9,
+    fontWeight: FontWeight.w700,
+    height: 16 / 9,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const memoryAiMessage = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+    height: 22 / 15,
+    letterSpacing: 0,
+    color: AppColors.aiPromptText,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const memoryDrinkName = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    height: 32 / 24,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const memorySource = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+    height: 20 / 13,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const memoryTime = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w400,
+    height: 19 / 13,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const memoryNoteTitle = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    height: 18 / 13,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const memoryNoteBody = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 22 / 14,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const memoryAction = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    height: 22 / 15,
+    letterSpacing: 0,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
   static const recordDialogBody = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w400,

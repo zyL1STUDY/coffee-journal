@@ -247,3 +247,54 @@
 - Milestone 1：导航 + Home 基础 UI，已完成并已提交。
 - Milestone 1.5：Home UI Polish，已基本完成，等待最终视觉确认。
 - Milestone 2：Record Flow foundation，核心闭环已完成，当前处于 Review / Polish 阶段，尚未提交。
+
+## 2026-07-10 Daily Development Log
+
+日期：2026-07-10
+
+今日完成内容：
+
+- 开始并完成 Milestone 3「Journal 基础体验」开发：
+  - 实现 Latte Glass Calendar。
+  - 实现月份 / 日期 / 星期标题展示。
+  - 使用 Coffee Sticker 标记有记录的日期。
+  - 支持多杯记录 Badge。
+  - 点击有记录日期打开 Coffee Memory Mock。
+- 根据 Review 继续打磨 Journal：
+  - 缩短日历日期上下间距，避免日历过长。
+  - 放大日历 Coffee Sticker，并覆盖在日期数字上。
+  - 增加咖啡贴纸掉落出现效果。
+  - 调整 Coffee Memory 排版、按钮重量、关闭入口和页面高度。
+  - 修复切换到 Home / Profile 后返回 Journal 仍停留在详情页的问题。
+  - 修复切换 Tab 时 Coffee Memory 退场动画可见的问题。
+  - 将 Journal 顶部月份区域改为左右并列的月份 / 年份月份 Mock 布局。
+- 新增可复用视觉组件：
+  - `LatteGlassCard` 用于 Journal Calendar 的 Latte Glass 卡片。
+  - `AiCandyGlassCard` 用于 AI 提示的糖果毛玻璃质感。
+- 将 Home 页 AI 小提示模块改为糖果毛玻璃形式，并多次压缩高度，使它更像轻提示而不是大卡片。
+- 调整 Record Flow 背景模糊：
+  - 使用真实 Home 页面作为背景，而不是骨架占位。
+  - 保持背景模糊后仍能看到内容层次。
+- 补充 Widget Tests：
+  - 覆盖 Journal Coffee Memory 打开。
+  - 覆盖离开 Journal 后 Coffee Memory 自动关闭。
+- 已运行并通过：
+  - `flutter analyze`
+  - `flutter test`
+
+修改原因：
+
+- Journal 的核心体验需要让用户一眼看到本月咖啡记忆，并能快速打开 Coffee Memory。
+- Coffee Sticker 比矩形缩略图更符合当前 Coffee Journal 的温暖、轻量、成就感方向。
+- AI 提示需要在 Home 与 Coffee Memory 中保持一致的视觉语言。
+- Record Flow 与 Coffee Memory 的背景模糊需要保持统一，同时不能让背景内容完全消失。
+
+新增或修改的 commit：
+
+- `feat: build journal foundation and polish glass UI`（本次收尾提交，准备推送 GitHub）
+
+当前 Milestone 状态：
+
+- Milestone 1：导航 + Home 基础 UI，已完成并已提交。
+- Milestone 2：Record Flow foundation，已完成并已提交。
+- Milestone 3：Journal 基础体验，已完成基础体验并进入 Review / Polish 阶段。

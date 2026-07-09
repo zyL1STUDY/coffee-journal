@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../home/presentation/home_page.dart';
 
 class RecordFlowDismissController {
   Future<void> Function()? _dismiss;
@@ -743,61 +744,23 @@ class _RecordHomeBackdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        const Positioned(
-          left: 24,
-          top: 36,
-          child: Text('早安', style: AppTypography.greeting),
-        ),
-        const Positioned(
-          left: 24,
-          top: 78,
-          child: Text('2026年6月26日\n星期五', style: AppTypography.date),
-        ),
-        Positioned(
-          left: 24,
-          top: 150,
-          child: Container(
-            width: AppDimensions.homeTodayCardWidth,
-            height: AppDimensions.homeTodayCardHeight,
-            decoration: const BoxDecoration(
-              color: AppColors.homeTodayCard,
-              borderRadius: AppRadius.todayCardBorder,
-            ),
-          ),
-        ),
-        const Positioned(
-          left: 24,
-          top: 415,
-          child: Text('最近记录', style: AppTypography.sectionTitle),
-        ),
-        for (final top in const [452.0, 530.0, 608.0])
+    return const IgnorePointer(
+      child: Stack(
+        children: [
+          HomePage(),
           Positioned(
-            left: 24,
-            top: top,
-            child: Container(
-              width: AppDimensions.homeCoffeeCardWidth,
-              height: 68,
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                border: Border.all(color: AppColors.outline),
-                borderRadius: AppRadius.cardBorder,
+            left: 0,
+            top: AppDimensions.homeContentHeight,
+            child: ColoredBox(
+              color: AppColors.bottomNavigation,
+              child: SizedBox(
+                width: AppDimensions.mobileViewportWidth,
+                height: AppDimensions.bottomNavigationHeight,
               ),
             ),
           ),
-        const Positioned(
-          left: 0,
-          top: 762,
-          child: ColoredBox(
-            color: AppColors.bottomNavigation,
-            child: SizedBox(
-              width: AppDimensions.mobileViewportWidth,
-              height: AppDimensions.bottomNavigationHeight,
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

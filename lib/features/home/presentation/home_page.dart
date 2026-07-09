@@ -10,6 +10,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/ai_candy_glass_card.dart';
 import '../../record/application/coffee_record_repository.dart';
 import '../../record/domain/coffee_record.dart';
 import '../../../shared/widgets/primary_action_button.dart';
@@ -104,56 +105,52 @@ class _TodayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: AppDimensions.homeTodayCardWidth,
       height: AppDimensions.homeTodayCardHeight,
-      padding: const EdgeInsets.fromLTRB(
-        AppDimensions.homeTodayCardPaddingLeft,
-        AppDimensions.homeTodayCardPaddingTop,
-        AppDimensions.homeTodayCardPaddingRight,
-        AppDimensions.homeTodayCardPaddingBottom,
-      ),
-      decoration: const BoxDecoration(
-        color: AppColors.homeTodayCard,
-        borderRadius: AppRadius.todayCardBorder,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.homeCardShadow,
-            blurRadius: 24,
-            offset: Offset(0, 8),
+      child: AiCandyGlassCard(
+        radius: AppRadius.todayCard,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppDimensions.homeTodayCardPaddingLeft,
+            AppDimensions.homeTodayCardPaddingTop,
+            AppDimensions.homeTodayCardPaddingRight,
+            AppDimensions.homeTodayCardPaddingBottom,
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(
-            width: AppDimensions.homeTodayCardCopyWidth,
-            height: AppDimensions.homeTodayCardCopyHeight,
-            child: Padding(
-              padding: EdgeInsets.only(top: AppDimensions.homeTodayCardTextTop),
-              child: Text(
-                '今天有点冷，\n热拿铁应该很舒服',
-                style: AppTypography.todayCardSentence,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(
+                width: AppDimensions.homeTodayCardCopyWidth,
+                height: AppDimensions.homeTodayCardCopyHeight,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: AppDimensions.homeTodayCardTextTop,
+                  ),
+                  child: Text(
+                    '今天有点冷，\n热拿铁应该很舒服',
+                    style: AppTypography.todayCardSentence,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: AppDimensions.homeTodayCardInternalGap),
+              Container(
+                width: AppDimensions.homeCoffeeVisualBubble,
+                height: AppDimensions.homeCoffeeVisualBubble,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: AppColors.coffeeVisualSurface,
+                  shape: BoxShape.circle,
+                ),
+                child: SvgPicture.asset(
+                  'assets/images/home/latte_placeholder.svg',
+                  width: AppDimensions.homeCoffeeVisualWidth,
+                  height: AppDimensions.homeCoffeeVisualHeight,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: AppDimensions.homeTodayCardInternalGap),
-          Container(
-            width: AppDimensions.homeCoffeeVisualBubble,
-            height: AppDimensions.homeCoffeeVisualBubble,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: AppColors.coffeeVisualSurface,
-              shape: BoxShape.circle,
-            ),
-            child: SvgPicture.asset(
-              'assets/images/home/latte_placeholder.svg',
-              width: AppDimensions.homeCoffeeVisualWidth,
-              height: AppDimensions.homeCoffeeVisualHeight,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
