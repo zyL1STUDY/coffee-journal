@@ -20,6 +20,79 @@ void main() {
     expect(find.bySemanticsLabel('我的'), findsOneWidget);
   });
 
+  testWidgets('renders final profile page menu', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const ProviderScope(child: CoffeeJournalApp()));
+
+    await tester.tap(find.bySemanticsLabel('我的'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Profile'), findsNothing);
+    expect(find.text('Coffee Journal'), findsOneWidget);
+    expect(find.text('More than coffee. More than memories.'), findsOneWidget);
+    expect(find.text('个人信息'), findsOneWidget);
+    expect(find.text('语言'), findsOneWidget);
+    expect(find.text('桌面小组件'), findsOneWidget);
+    expect(find.text('数据与隐私'), findsOneWidget);
+    expect(find.text('关于 Coffee Journal'), findsOneWidget);
+    expect(find.text('Sticker 收藏'), findsNothing);
+    expect(find.text('Coming Soon'), findsNothing);
+    expect(find.text('版本MVP V1.0'), findsOneWidget);
+  });
+
+  testWidgets('opens profile detail pages', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const ProviderScope(child: CoffeeJournalApp()));
+
+    await tester.tap(find.bySemanticsLabel('我的'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('个人信息').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Coffee Lover'), findsOneWidget);
+    expect(find.text('累计记录杯数'), findsOneWidget);
+    await tester.tap(find.text('‹'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('语言').first);
+    await tester.pumpAndSettle();
+    expect(find.text('简体中文'), findsOneWidget);
+    expect(find.text('English'), findsOneWidget);
+    expect(find.text('Coming Soon'), findsOneWidget);
+    await tester.tap(find.text('‹'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('桌面小组件').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Small Widget'), findsOneWidget);
+    expect(find.text('Medium Widget'), findsOneWidget);
+    expect(find.text('如何添加到桌面'), findsOneWidget);
+    await tester.tap(find.text('‹'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('数据与隐私').first);
+    await tester.pumpAndSettle();
+    expect(find.text('自动备份'), findsOneWidget);
+    expect(find.text('隐私政策'), findsOneWidget);
+    expect(find.text('用户协议'), findsOneWidget);
+    await tester.tap(find.text('‹'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('关于 Coffee Journal').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Version MVP v1.0'), findsOneWidget);
+    expect(find.text('Designed with ☕ in Australia.'), findsOneWidget);
+    expect(find.text('感谢使用 Coffee Journal，希望每一杯咖啡，都值得被记住。'), findsOneWidget);
+  });
+
   testWidgets('saves a brand record and returns home', (tester) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
@@ -184,7 +257,7 @@ void main() {
     await tester.tap(find.bySemanticsLabel('Journal'));
     await tester.pumpAndSettle();
 
-    expect(find.text('6月'), findsOneWidget);
+    expect(find.text('June'), findsOneWidget);
     expect(find.text('这个月的咖啡日记'), findsOneWidget);
 
     await tester.tapAt(const Offset(60, 266));
@@ -200,7 +273,7 @@ void main() {
     expect(find.text('热拿铁'), findsNothing);
   });
 
-  testWidgets('journal memory closes after leaving the tab', (tester) async {
+  testWidgets('journal memory covers bottom navigation', (tester) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -215,13 +288,15 @@ void main() {
 
     expect(find.text('热拿铁'), findsOneWidget);
 
-    await tester.tap(find.bySemanticsLabel('今天'));
+    await tester.tapAt(const Offset(195, 802));
     await tester.pumpAndSettle();
-    await tester.tap(find.bySemanticsLabel('Journal'));
+
+    expect(find.text('热拿铁'), findsOneWidget);
+
+    await tester.tap(find.text('×'));
     await tester.pumpAndSettle();
 
     expect(find.text('热拿铁'), findsNothing);
-    expect(find.text('6月'), findsOneWidget);
-    await tester.pump(const Duration(milliseconds: 280));
+    expect(find.text('June'), findsOneWidget);
   });
 }

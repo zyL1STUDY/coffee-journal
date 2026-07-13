@@ -298,3 +298,45 @@
 - Milestone 1：导航 + Home 基础 UI，已完成并已提交。
 - Milestone 2：Record Flow foundation，已完成并已提交。
 - Milestone 3：Journal 基础体验，已完成基础体验并进入 Review / Polish 阶段。
+
+## 2026-07-13 Daily Development Log
+
+日期：2026-07-13
+
+今日完成内容：
+
+- 完善 Profile 主页面：
+  - 去掉 Profile Header，保留 Coffee Journal 品牌区域。
+  - 调整菜单顺序为个人信息、语言、桌面小组件、数据与隐私、关于 Coffee Journal。
+  - 删除 Sticker 收藏入口和主页面 Coming Soon 文案。
+  - 保持 Latte Glass 风格，并补充底部版本号。
+- 新增 Profile 5 个二级页面：
+  - 个人信息：默认咖啡头像、昵称、加入时间、累计记录杯数、连续记录天数。
+  - 语言：简体中文当前选中，English 标记 Coming Soon。
+  - 桌面小组件：Small / Medium Widget 预览和「如何添加到桌面」入口。
+  - 数据与隐私：自动备份、导出数据、隐私政策、用户协议。
+  - 关于 Coffee Journal：Logo、Slogan、版本、Designed in Australia 和感谢文案。
+- 统一优化 Profile 二级页面视觉：
+  - 每个二级页面收敛为 1 个主卡片，减少页面碎片感。
+  - 统一返回按钮、标题字号、左右边距、卡片圆角和分隔线颜色。
+  - 弱化昵称输入框和自动备份开关视觉。
+  - 将加入时间格式调整为 `2026.06`。
+- 一并提交 Journal 的少量视觉调整，使当前 Journal 与 Profile 的 Latte Glass 风格更统一。
+- 补充 Widget Tests，覆盖 Profile 主菜单和二级页面入口。
+- 已运行并通过：
+  - `flutter analyze`
+  - `flutter test`
+
+修改原因：
+
+- Profile 是 MVP 中承载个人设置、偏好和产品信息的主要入口，需要从占位页完善为可展示的真实页面。
+- 二级页面初版存在「一个框一个框」的问题，本次统一收敛为单主卡片布局，让视觉更简洁、更像同一套设计系统。
+
+新增或修改的 commit：
+
+- 本次准备提交：`feat: polish profile pages`
+
+当前状态：
+
+- Profile 主页面和 5 个二级页面已完成 MVP 静态体验。
+- 当前仍未接入账号登录、真实同步、数据导出、隐私政策详情页等非 MVP 功能。

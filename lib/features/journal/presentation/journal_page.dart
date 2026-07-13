@@ -86,18 +86,18 @@ class _JournalPageState extends State<JournalPage>
         child: Stack(
           children: [
             Positioned(
-              left: 56,
+              left: 36,
               top: AppDimensions.journalTitleTop,
-              width: 112,
+              width: 128,
               height: AppDimensions.journalTitleHeight,
               child: _JournalPeriodButton(
-                label: '6月',
+                label: 'June',
                 semanticLabel: '选择月份',
                 style: AppTypography.journalMonthTitle,
               ),
             ),
             Positioned(
-              left: 222,
+              left: 252,
               top: AppDimensions.journalSubtitleTop,
               width: 112,
               height: AppDimensions.journalSubtitleHeight,
@@ -131,6 +131,20 @@ class _JournalPageState extends State<JournalPage>
                 ),
               ),
             ),
+            const Positioned(
+              left: AppDimensions.journalStatsLeft,
+              top: AppDimensions.journalStatsTop,
+              width: AppDimensions.journalStatsWidth,
+              height: AppDimensions.journalStatsHeight,
+              child: _JournalStatsRow(),
+            ),
+            const Positioned(
+              left: AppDimensions.journalSummaryLeft,
+              top: AppDimensions.journalSummaryTop,
+              width: AppDimensions.journalSummaryWidth,
+              height: AppDimensions.journalSummaryHeight,
+              child: _JournalMonthlySummary(),
+            ),
           ],
         ),
       ),
@@ -141,7 +155,7 @@ class _JournalPageState extends State<JournalPage>
     BuildContext context,
     _JournalMemory memory,
   ) async {
-    final navigator = Navigator.of(context);
+    final navigator = Navigator.of(context, rootNavigator: true);
     final route = PageRouteBuilder<void>(
       opaque: false,
       barrierColor: Colors.transparent,
@@ -149,7 +163,10 @@ class _JournalPageState extends State<JournalPage>
       transitionDuration: AppDimensions.recordDismissDuration,
       reverseTransitionDuration: AppDimensions.recordDismissDuration,
       pageBuilder: (context, animation, secondaryAnimation) {
-        return _CoffeeMemoryOverlay(memory: memory);
+        return Material(
+          type: MaterialType.transparency,
+          child: _CoffeeMemoryOverlay(memory: memory),
+        );
       },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(opacity: animation, child: child);
@@ -190,7 +207,7 @@ class _CoffeeMemoryOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: AppDimensions.mobileViewportWidth,
-      height: AppDimensions.journalContentHeight,
+      height: AppDimensions.mobileViewportHeight,
       child: Stack(
         children: [
           Positioned.fill(
@@ -206,11 +223,76 @@ class _CoffeeMemoryOverlay extends StatelessWidget {
           Positioned(
             left: 0,
             top:
-                AppDimensions.journalContentHeight -
+                AppDimensions.mobileViewportHeight -
                 AppDimensions.memorySheetHeight,
             child: _CoffeeMemorySheet(memory: memory),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _JournalStatsRow extends StatelessWidget {
+  const _JournalStatsRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: const [
+        _JournalStatItem(value: '18杯', label: '本月咖啡'),
+        SizedBox(width: AppDimensions.journalStatGap),
+        _JournalStatItem(value: '6家', label: '去过店铺'),
+        SizedBox(width: AppDimensions.journalStatGap),
+        _JournalStatItem(value: '5天', label: '连续记录'),
+      ],
+    );
+  }
+}
+
+class _JournalStatItem extends StatelessWidget {
+  const _JournalStatItem({required this.value, required this.label});
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: AppDimensions.journalStatItemWidth,
+      height: AppDimensions.journalStatsHeight,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            textAlign: TextAlign.center,
+            style: AppTypography.journalStatValue,
+          ),
+          const SizedBox(height: 5),
+          Text(label, style: AppTypography.journalStatLabel),
+        ],
+      ),
+    );
+  }
+}
+
+class _JournalMonthlySummary extends StatelessWidget {
+  const _JournalMonthlySummary();
+
+  @override
+  Widget build(BuildContext context) {
+    return AiCandyGlassCard(
+      radius: AppRadius.card,
+      child: const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 22),
+          child: Text(
+            '最近开始更喜欢独立咖啡店了。',
+            textAlign: TextAlign.center,
+            style: AppTypography.journalSummary,
+          ),
+        ),
       ),
     );
   }
@@ -735,15 +817,15 @@ class _MemoryActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.background.withValues(alpha: 0.68),
-        border: Border.all(color: AppColors.outline),
+        color: AppColors.background.withValues(alpha: 0.22),
+        border: Border.all(color: AppColors.outline.withValues(alpha: 0.58)),
         borderRadius: BorderRadius.circular(AppRadius.memoryAction),
       ),
       child: Center(
         child: Text(
           label,
           style: AppTypography.memoryAction.copyWith(
-            color: AppColors.journalMonthLabel,
+            color: AppColors.journalMonthLabel.withValues(alpha: 0.88),
           ),
         ),
       ),

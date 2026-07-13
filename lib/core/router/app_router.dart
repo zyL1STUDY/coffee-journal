@@ -88,6 +88,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
         ),
       ),
+      GoRoute(
+        path: AppRoute.profileInfo.path,
+        pageBuilder: (context, state) =>
+            const NoTransitionPage<void>(child: ProfileInfoPage()),
+      ),
+      GoRoute(
+        path: AppRoute.profileLanguage.path,
+        pageBuilder: (context, state) =>
+            const NoTransitionPage<void>(child: ProfileLanguagePage()),
+      ),
+      GoRoute(
+        path: AppRoute.profileWidgets.path,
+        pageBuilder: (context, state) =>
+            const NoTransitionPage<void>(child: ProfileWidgetsPage()),
+      ),
+      GoRoute(
+        path: AppRoute.profilePrivacy.path,
+        pageBuilder: (context, state) =>
+            const NoTransitionPage<void>(child: ProfilePrivacyPage()),
+      ),
+      GoRoute(
+        path: AppRoute.profileAbout.path,
+        pageBuilder: (context, state) =>
+            const NoTransitionPage<void>(child: ProfileAboutPage()),
+      ),
     ],
   );
 });

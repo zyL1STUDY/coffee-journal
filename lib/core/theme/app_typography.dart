@@ -246,7 +246,7 @@ class AppTypography {
 
   static const journalDay = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     height: 18 / 14,
     letterSpacing: 0,
     color: AppColors.textPrimary,
@@ -277,6 +277,33 @@ class AppTypography {
     height: 16 / 9,
     letterSpacing: 0,
     color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalStatValue = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+    height: 23 / 18,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalStatLabel = TextStyle(
+    fontSize: 11,
+    fontWeight: FontWeight.w500,
+    height: 15 / 11,
+    letterSpacing: 0,
+    color: AppColors.journalMonthLabel,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const journalSummary = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+    height: 22 / 15,
+    letterSpacing: 0,
+    color: AppColors.aiPromptText,
     fontFamilyFallback: fontFamilyFallback,
   );
 
@@ -335,10 +362,109 @@ class AppTypography {
   );
 
   static const memoryAction = TextStyle(
-    fontSize: 15,
-    fontWeight: FontWeight.w600,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
     height: 22 / 15,
     letterSpacing: 0,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileBrandName = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    height: 30 / 24,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileBrandSlogan = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w400,
+    height: 25 / 17,
+    letterSpacing: 0,
+    color: AppColors.textSecondary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileMenuLabel = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+    height: 22 / 15,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileChevron = TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w400,
+    height: 22 / 22,
+    letterSpacing: 0,
+    color: AppColors.textMuted,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileVersion = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+    height: 18 / 13,
+    letterSpacing: 0,
+    color: AppColors.textMuted,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileDetailTitle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    height: 24 / 18,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileDetailBack = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w400,
+    height: 26 / 24,
+    letterSpacing: 0,
+    color: AppColors.textSecondary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileDetailSectionTitle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    height: 21 / 15,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileDetailBody = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 21 / 14,
+    letterSpacing: 0,
+    color: AppColors.textSecondary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileDetailMeta = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+    height: 18 / 13,
+    letterSpacing: 0,
+    color: AppColors.textMuted,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const profileWidgetValue = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    height: 30 / 24,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
     fontFamilyFallback: fontFamilyFallback,
   );
 

@@ -5,7 +5,12 @@ enum AppRoute {
   cafeRecord('/record/cafe'),
   homemadeRecord('/record/homemade'),
   journal('/journal'),
-  profile('/profile');
+  profile('/profile'),
+  profileInfo('/profile/info'),
+  profileLanguage('/profile/language'),
+  profileWidgets('/profile/widgets'),
+  profilePrivacy('/profile/privacy'),
+  profileAbout('/profile/about');
 
   const AppRoute(this.path);
 
