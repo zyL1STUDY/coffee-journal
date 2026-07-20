@@ -1,32 +1,29 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/router/app_route.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/ai_candy_glass_card.dart';
 import '../../../shared/widgets/latte_glass_card.dart';
+import '../../record/application/coffee_record_repository.dart';
+import '../../record/domain/coffee_record.dart';
 import '../../record/presentation/record_flow_widgets.dart';
 
-class JournalPage extends StatefulWidget {
+class JournalPage extends ConsumerStatefulWidget {
   const JournalPage({super.key});
 
   @override
-  State<JournalPage> createState() => _JournalPageState();
+  ConsumerState<JournalPage> createState() => _JournalPageState();
 }
 
-class _JournalPageState extends State<JournalPage>
+class _JournalPageState extends ConsumerState<JournalPage>
     with SingleTickerProviderStateMixin {
-  static const _memories = <int, _JournalMemory>{
-    3: _JournalMemory(day: 3, count: 1, order: 0, isToday: true),
-    8: _JournalMemory(day: 8, count: 2, order: 1),
-    14: _JournalMemory(day: 14, count: 1, order: 2),
-    21: _JournalMemory(day: 21, count: 3, order: 3),
-    26: _JournalMemory(day: 26, count: 1, order: 4),
-  };
-
   late final AnimationController _coffeeDropController;
   Route<void>? _memorySheetRoute;
   bool _wasTickerEnabled = false;
@@ -78,6 +75,16 @@ class _JournalPageState extends State<JournalPage>
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final activeRecords = [
+      for (final record in ref.watch(coffeeRecordRepositoryProvider))
+        if (!record.isDeleted &&
+            record.createdAt.year == now.year &&
+            record.createdAt.month == now.month)
+          record,
+    ]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final memories = _buildMemories(activeRecords, now);
+
     return ColoredBox(
       color: AppColors.background,
       child: SizedBox(
@@ -91,7 +98,7 @@ class _JournalPageState extends State<JournalPage>
               width: 128,
               height: AppDimensions.journalTitleHeight,
               child: _JournalPeriodButton(
-                label: 'June',
+                label: _monthName(now.month),
                 semanticLabel: '选择月份',
                 style: AppTypography.journalMonthTitle,
               ),
@@ -102,20 +109,9 @@ class _JournalPageState extends State<JournalPage>
               width: 112,
               height: AppDimensions.journalSubtitleHeight,
               child: _JournalPeriodButton(
-                label: '2026.06',
+                label: '${now.year}.${now.month.toString().padLeft(2, '0')}',
                 semanticLabel: '选择年份月份',
                 style: AppTypography.journalMonthSubtitle,
-              ),
-            ),
-            const Positioned(
-              left: 48,
-              top: AppDimensions.journalDescriptionTop,
-              width: 294,
-              height: AppDimensions.journalDescriptionHeight,
-              child: Text(
-                '这个月的咖啡日记',
-                textAlign: TextAlign.left,
-                style: AppTypography.journalDescription,
               ),
             ),
             Positioned(
@@ -125,25 +121,26 @@ class _JournalPageState extends State<JournalPage>
                 width: AppDimensions.journalCalendarWidth,
                 height: AppDimensions.journalCalendarHeight,
                 child: _JournalCalendar(
-                  memories: _memories,
+                  memories: memories,
+                  month: now,
                   dropAnimation: _coffeeDropController,
                   onMemoryTap: (memory) => _showCoffeeMemory(context, memory),
                 ),
               ),
             ),
-            const Positioned(
+            Positioned(
               left: AppDimensions.journalStatsLeft,
               top: AppDimensions.journalStatsTop,
               width: AppDimensions.journalStatsWidth,
               height: AppDimensions.journalStatsHeight,
-              child: _JournalStatsRow(),
+              child: _JournalStatsRow(records: activeRecords),
             ),
-            const Positioned(
+            Positioned(
               left: AppDimensions.journalSummaryLeft,
               top: AppDimensions.journalSummaryTop,
               width: AppDimensions.journalSummaryWidth,
               height: AppDimensions.journalSummaryHeight,
-              child: _JournalMonthlySummary(),
+              child: _JournalMonthlySummary(records: activeRecords),
             ),
           ],
         ),
@@ -234,17 +231,25 @@ class _CoffeeMemoryOverlay extends StatelessWidget {
 }
 
 class _JournalStatsRow extends StatelessWidget {
-  const _JournalStatsRow();
+  const _JournalStatsRow({required this.records});
+
+  final List<CoffeeRecord> records;
 
   @override
   Widget build(BuildContext context) {
+    final sourceCount = records
+        .map((record) => record.sourceName)
+        .toSet()
+        .length;
+    final streak = _recordingStreak(records);
+
     return Row(
-      children: const [
-        _JournalStatItem(value: '18杯', label: '本月咖啡'),
-        SizedBox(width: AppDimensions.journalStatGap),
-        _JournalStatItem(value: '6家', label: '去过店铺'),
-        SizedBox(width: AppDimensions.journalStatGap),
-        _JournalStatItem(value: '5天', label: '连续记录'),
+      children: [
+        _JournalStatItem(value: '${records.length}杯', label: '本月咖啡'),
+        const SizedBox(width: AppDimensions.journalStatGap),
+        _JournalStatItem(value: '$sourceCount家', label: '去过店铺'),
+        const SizedBox(width: AppDimensions.journalStatGap),
+        _JournalStatItem(value: '$streak天', label: '连续记录'),
       ],
     );
   }
@@ -278,17 +283,21 @@ class _JournalStatItem extends StatelessWidget {
 }
 
 class _JournalMonthlySummary extends StatelessWidget {
-  const _JournalMonthlySummary();
+  const _JournalMonthlySummary({required this.records});
+
+  final List<CoffeeRecord> records;
 
   @override
   Widget build(BuildContext context) {
     return AiCandyGlassCard(
       radius: AppRadius.card,
-      child: const Center(
+      child: Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 22),
+          padding: const EdgeInsets.symmetric(horizontal: 22),
           child: Text(
-            '最近开始更喜欢独立咖啡店了。',
+            records.isEmpty
+                ? '记录一杯后，这里会慢慢长出你的咖啡月历。'
+                : '这个月已经留下 ${records.length} 杯咖啡记忆。',
             textAlign: TextAlign.center,
             style: AppTypography.journalSummary,
           ),
@@ -329,11 +338,13 @@ class _JournalPeriodButton extends StatelessWidget {
 class _JournalCalendar extends StatelessWidget {
   const _JournalCalendar({
     required this.memories,
+    required this.month,
     required this.dropAnimation,
     required this.onMemoryTap,
   });
 
   final Map<int, _JournalMemory> memories;
+  final DateTime month;
   final Animation<double> dropAnimation;
   final ValueChanged<_JournalMemory> onMemoryTap;
 
@@ -341,6 +352,9 @@ class _JournalCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
+    final weekRows = _weekRows(daysInMonth);
+
     return Padding(
       padding: const EdgeInsets.only(
         left: AppDimensions.journalCalendarGridLeft,
@@ -364,21 +378,39 @@ class _JournalCalendar extends StatelessWidget {
                   style: AppTypography.journalWeekday,
                 ),
               ),
-            for (var day = 1; day <= 30; day++)
+            for (var weekIndex = 0; weekIndex < weekRows.length; weekIndex++)
               Positioned(
-                left: _dayLeft((day - 1) % 7),
+                left: 0,
                 top:
                     AppDimensions.journalFirstWeekTop +
-                    ((day - 1) ~/ 7) *
+                    weekIndex *
                         (AppDimensions.journalDayHeight +
                             AppDimensions.journalRowGap),
-                width: AppDimensions.journalDayWidth,
+                width: _weekRowWidth(weekRows[weekIndex].length),
                 height: AppDimensions.journalDayHeight,
-                child: _JournalDayCell(
-                  day: day,
-                  memory: memories[day],
-                  dropAnimation: dropAnimation,
-                  onMemoryTap: onMemoryTap,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (
+                      var dayIndex = 0;
+                      dayIndex < weekRows[weekIndex].length;
+                      dayIndex++
+                    ) ...[
+                      SizedBox(
+                        width: AppDimensions.journalDayWidth,
+                        height: AppDimensions.journalDayHeight,
+                        child: _JournalDayCell(
+                          day: weekRows[weekIndex][dayIndex],
+                          memory: memories[weekRows[weekIndex][dayIndex]],
+                          month: month,
+                          dropAnimation: dropAnimation,
+                          onMemoryTap: onMemoryTap,
+                        ),
+                      ),
+                      if (dayIndex != weekRows[weekIndex].length - 1)
+                        const SizedBox(width: AppDimensions.journalColumnGap),
+                    ],
+                  ],
                 ),
               ),
           ],
@@ -391,18 +423,34 @@ class _JournalCalendar extends StatelessWidget {
     return column *
         (AppDimensions.journalDayWidth + AppDimensions.journalColumnGap);
   }
+
+  static double _weekRowWidth(int dayCount) {
+    return dayCount * AppDimensions.journalDayWidth +
+        (dayCount - 1) * AppDimensions.journalColumnGap;
+  }
+
+  static List<List<int>> _weekRows(int daysInMonth) {
+    final rows = <List<int>>[];
+    for (var firstDay = 1; firstDay <= daysInMonth; firstDay += 7) {
+      final lastDay = (firstDay + 6).clamp(1, daysInMonth);
+      rows.add([for (var day = firstDay; day <= lastDay; day++) day]);
+    }
+    return rows;
+  }
 }
 
 class _JournalDayCell extends StatelessWidget {
   const _JournalDayCell({
     required this.day,
     required this.memory,
+    required this.month,
     required this.dropAnimation,
     required this.onMemoryTap,
   });
 
   final int day;
   final _JournalMemory? memory;
+  final DateTime month;
   final Animation<double> dropAnimation;
   final ValueChanged<_JournalMemory> onMemoryTap;
 
@@ -413,7 +461,7 @@ class _JournalDayCell extends StatelessWidget {
 
     return Semantics(
       button: hasMemory,
-      label: hasMemory ? '6月$day日咖啡记忆' : '6月$day日',
+      label: hasMemory ? '${month.month}月$day日咖啡记忆' : '${month.month}月$day日',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: hasMemory ? () => onMemoryTap(memory!) : null,
@@ -607,13 +655,23 @@ class _MemoryCountBadge extends StatelessWidget {
   }
 }
 
-class _CoffeeMemorySheet extends StatelessWidget {
+class _CoffeeMemorySheet extends ConsumerWidget {
   const _CoffeeMemorySheet({required this.memory});
 
   final _JournalMemory memory;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final record = memory.record;
+    final drinkName = record.drinkName?.trim();
+    final note = record.note?.trim();
+    final title = drinkName == null || drinkName.isEmpty
+        ? record.sourceName
+        : drinkName;
+    final aiMessage = record.aiMessage?.trim().isNotEmpty == true
+        ? record.aiMessage!.trim()
+        : '这杯咖啡已经安静地留在今天了。';
+
     return SizedBox(
       width: AppDimensions.mobileViewportWidth,
       height: AppDimensions.memorySheetHeight,
@@ -664,13 +722,13 @@ class _CoffeeMemorySheet extends StatelessWidget {
               height: AppDimensions.memoryStickerHeight,
               child: _MemoryCoffeeSticker(),
             ),
-            const Positioned(
+            Positioned(
               left: 30,
               top: AppDimensions.memoryDrinkTop,
               width: 330,
               height: AppDimensions.memoryDrinkHeight,
               child: Text(
-                '热拿铁',
+                title,
                 textAlign: TextAlign.center,
                 style: AppTypography.memoryDrinkName,
               ),
@@ -681,12 +739,12 @@ class _CoffeeMemorySheet extends StatelessWidget {
               width: 330,
               height: AppDimensions.memoryMetaHeight,
               child: Text(
-                '蓝瓶 · 独立咖啡店 · 2026年6月${memory.day}日 15:38',
+                '${record.sourceName} · ${record.sourceType.title} · ${_formatMemoryDate(record.createdAt)}',
                 textAlign: TextAlign.center,
                 style: AppTypography.memorySource,
               ),
             ),
-            const Positioned(
+            Positioned(
               left:
                   (AppDimensions.mobileViewportWidth -
                       AppDimensions.memoryAiWidth) /
@@ -697,9 +755,9 @@ class _CoffeeMemorySheet extends StatelessWidget {
               child: AiCandyGlassCard(
                 child: Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18),
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
                     child: Text(
-                      '今天有点冷，这杯热拿铁刚刚好。',
+                      aiMessage,
                       textAlign: TextAlign.center,
                       style: AppTypography.memoryAiMessage,
                     ),
@@ -707,26 +765,45 @@ class _CoffeeMemorySheet extends StatelessWidget {
                 ),
               ),
             ),
-            const Positioned(
+            Positioned(
               left: 24,
               top: AppDimensions.memoryNoteTop,
               width: 342,
               height: AppDimensions.memoryNoteHeight,
-              child: _MemoryNoteCard(),
+              child: _MemoryNoteCard(
+                note: note == null || note.isEmpty ? '还没有备注。' : note,
+              ),
             ),
-            const Positioned(
+            Positioned(
               left: 24,
               top: AppDimensions.memoryActionTop,
               width: AppDimensions.memoryActionWidth,
               height: AppDimensions.memoryActionHeight,
-              child: _MemoryActionButton(label: '编辑'),
+              child: _MemoryActionButton(
+                label: '编辑',
+                onTap: () {
+                  Navigator.of(context).pop();
+                  context.go(_editPath(record));
+                },
+              ),
             ),
-            const Positioned(
+            Positioned(
               left: 208,
               top: AppDimensions.memoryActionTop,
               width: AppDimensions.memoryActionWidth,
               height: AppDimensions.memoryActionHeight,
-              child: _MemoryActionButton(label: '删除'),
+              child: _MemoryActionButton(
+                label: '删除',
+                onTap: () async {
+                  final shouldDelete = await _confirmDelete(context);
+                  if (shouldDelete == true && context.mounted) {
+                    ref
+                        .read(coffeeRecordRepositoryProvider.notifier)
+                        .delete(record.id);
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -784,20 +861,22 @@ class _MemoryCoffeeSticker extends StatelessWidget {
 }
 
 class _MemoryNoteCard extends StatelessWidget {
-  const _MemoryNoteCard();
+  const _MemoryNoteCard({required this.note});
+
+  final String note;
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('我的记录', style: AppTypography.memoryNoteTitle),
-            SizedBox(height: 8),
+            const Text('我的记录', style: AppTypography.memoryNoteTitle),
+            const SizedBox(height: 8),
             Text(
-              '和朋友逛街时买的，拿在手里很暖。',
+              note,
               textAlign: TextAlign.center,
               style: AppTypography.memoryNoteBody,
             ),
@@ -809,23 +888,28 @@ class _MemoryNoteCard extends StatelessWidget {
 }
 
 class _MemoryActionButton extends StatelessWidget {
-  const _MemoryActionButton({required this.label});
+  const _MemoryActionButton({required this.label, required this.onTap});
 
   final String label;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.background.withValues(alpha: 0.22),
-        border: Border.all(color: AppColors.outline.withValues(alpha: 0.58)),
-        borderRadius: BorderRadius.circular(AppRadius.memoryAction),
-      ),
-      child: Center(
-        child: Text(
-          label,
-          style: AppTypography.memoryAction.copyWith(
-            color: AppColors.journalMonthLabel.withValues(alpha: 0.88),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.background.withValues(alpha: 0.22),
+          border: Border.all(color: AppColors.outline.withValues(alpha: 0.58)),
+          borderRadius: BorderRadius.circular(AppRadius.memoryAction),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: AppTypography.memoryAction.copyWith(
+              color: AppColors.journalMonthLabel.withValues(alpha: 0.88),
+            ),
           ),
         ),
       ),
@@ -836,13 +920,222 @@ class _MemoryActionButton extends StatelessWidget {
 class _JournalMemory {
   const _JournalMemory({
     required this.day,
-    required this.count,
+    required this.records,
     required this.order,
     this.isToday = false,
   });
 
   final int day;
-  final int count;
+  final List<CoffeeRecord> records;
   final int order;
   final bool isToday;
+
+  int get count => records.length;
+
+  CoffeeRecord get record => records.first;
+}
+
+Map<int, _JournalMemory> _buildMemories(
+  List<CoffeeRecord> records,
+  DateTime month,
+) {
+  final grouped = <int, List<CoffeeRecord>>{};
+  for (final record in records) {
+    grouped.putIfAbsent(record.createdAt.day, () => []).add(record);
+  }
+
+  var order = 0;
+  final today = DateTime.now();
+  final result = <int, _JournalMemory>{};
+  for (final day in grouped.keys.toList()..sort()) {
+    final dayRecords = grouped[day]!
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    result[day] = _JournalMemory(
+      day: day,
+      records: dayRecords,
+      order: order++,
+      isToday:
+          today.year == month.year &&
+          today.month == month.month &&
+          today.day == day,
+    );
+  }
+  return result;
+}
+
+String _monthName(int month) {
+  const names = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  return names[month - 1];
+}
+
+int _recordingStreak(List<CoffeeRecord> records) {
+  if (records.isEmpty) {
+    return 0;
+  }
+
+  final days =
+      records
+          .map((record) {
+            final createdAt = record.createdAt;
+            return DateTime(createdAt.year, createdAt.month, createdAt.day);
+          })
+          .toSet()
+          .toList()
+        ..sort((a, b) => b.compareTo(a));
+
+  var streak = 1;
+  for (var index = 1; index < days.length; index++) {
+    final expected = days[index - 1].subtract(const Duration(days: 1));
+    if (days[index] != expected) {
+      break;
+    }
+    streak++;
+  }
+  return streak;
+}
+
+String _formatMemoryDate(DateTime value) {
+  final month = value.month.toString();
+  final day = value.day.toString();
+  final hour = value.hour.toString().padLeft(2, '0');
+  final minute = value.minute.toString().padLeft(2, '0');
+  return '${value.year}年$month月$day日 $hour:$minute';
+}
+
+String _editPath(CoffeeRecord record) {
+  final basePath = switch (record.sourceType) {
+    CoffeeSourceType.brand => AppRoute.brandRecord.path,
+    CoffeeSourceType.cafe => AppRoute.cafeRecord.path,
+    CoffeeSourceType.homemade => AppRoute.homemadeRecord.path,
+  };
+  return '$basePath?editId=${record.id}';
+}
+
+Future<bool?> _confirmDelete(BuildContext context) {
+  return showGeneralDialog<bool>(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: '删除咖啡记忆',
+    barrierColor: Colors.black.withValues(alpha: 0.18),
+    transitionDuration: const Duration(milliseconds: 180),
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return Center(
+        child: Container(
+          width: AppDimensions.recordDiscardDialogWidth,
+          padding: const EdgeInsets.all(
+            AppDimensions.recordDiscardDialogPadding,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.circular(AppRadius.recordField),
+            boxShadow: const [
+              BoxShadow(
+                color: AppColors.recordSheetShadow,
+                blurRadius: 24,
+                offset: Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('删除这杯咖啡？', style: AppTypography.recordDialogTitle),
+              const SizedBox(height: 10),
+              const Text(
+                '删除后会从最近记录和 Journal 中移除。',
+                textAlign: TextAlign.center,
+                style: AppTypography.recordGentleNote,
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: _DeleteDialogAction(
+                      label: '取消',
+                      onTap: () => Navigator.of(context).pop(false),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: AppDimensions.recordDiscardDialogActionGap,
+                  ),
+                  Expanded(
+                    child: _DeleteDialogAction(
+                      label: '删除',
+                      isDestructive: true,
+                      onTap: () => Navigator.of(context).pop(true),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+    transitionBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
+      );
+      return FadeTransition(
+        opacity: curved,
+        child: ScaleTransition(
+          scale: Tween<double>(begin: 0.98, end: 1).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
+class _DeleteDialogAction extends StatelessWidget {
+  const _DeleteDialogAction({
+    required this.label,
+    required this.onTap,
+    this.isDestructive = false,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+  final bool isDestructive;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+        height: AppDimensions.recordDiscardDialogActionHeight,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isDestructive
+              ? AppColors.homeDeleteActionSurface
+              : AppColors.surfaceTint,
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+        ),
+        child: Text(
+          label,
+          style: AppTypography.recordDialogTitle.copyWith(
+            color: isDestructive
+                ? AppColors.homeDeleteActionText
+                : AppColors.textSecondary,
+          ),
+        ),
+      ),
+    );
+  }
 }

@@ -109,6 +109,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             const NoTransitionPage<void>(child: ProfilePrivacyPage()),
       ),
       GoRoute(
+        path: AppRoute.profilePrivacyPolicy.path,
+        pageBuilder: (context, state) =>
+            const NoTransitionPage<void>(child: ProfilePrivacyPolicyPage()),
+      ),
+      GoRoute(
+        path: AppRoute.profileTerms.path,
+        pageBuilder: (context, state) =>
+            const NoTransitionPage<void>(child: ProfileTermsPage()),
+      ),
+      GoRoute(
         path: AppRoute.profileAbout.path,
         pageBuilder: (context, state) =>
             const NoTransitionPage<void>(child: ProfileAboutPage()),

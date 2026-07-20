@@ -22,7 +22,7 @@ class PrimaryActionButton extends StatelessWidget {
           width: double.infinity,
           height: AppDimensions.buttonHeight,
           decoration: const BoxDecoration(
-            color: AppColors.accent,
+            color: AppColors.homePrimaryButton,
             borderRadius: AppRadius.button,
           ),
           child: Center(

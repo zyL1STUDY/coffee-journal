@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../widgets/application/coffee_widget_sync_service.dart';
 import '../domain/coffee_record.dart';
 
 class CoffeeRecordDraft {
@@ -26,39 +27,8 @@ final coffeeRecordRepositoryProvider =
 class MockCoffeeRecordRepository extends Notifier<List<CoffeeRecord>> {
   @override
   List<CoffeeRecord> build() {
-    final date = DateTime(2026, 6, 26, 8, 20);
-    return [
-      CoffeeRecord(
-        id: 'mock-morning-latte',
-        createdAt: date,
-        updatedAt: date,
-        isDeleted: false,
-        sourceType: CoffeeSourceType.cafe,
-        sourceName: '温暖的一杯',
-        drinkName: '晨间拿铁',
-        note: '温暖的一杯 · 08:20',
-      ),
-      CoffeeRecord(
-        id: 'mock-pour-over',
-        createdAt: date.subtract(const Duration(days: 1)),
-        updatedAt: date.subtract(const Duration(days: 1)),
-        isDeleted: false,
-        sourceType: CoffeeSourceType.homemade,
-        sourceName: '慢慢喝完',
-        drinkName: '手冲咖啡',
-        note: '慢慢喝完 · 昨天',
-      ),
-      CoffeeRecord(
-        id: 'mock-americano',
-        createdAt: date.subtract(const Duration(days: 2)),
-        updatedAt: date.subtract(const Duration(days: 2)),
-        isDeleted: false,
-        sourceType: CoffeeSourceType.brand,
-        sourceName: '清爽一点',
-        drinkName: '冰美式',
-        note: '清爽一点 · 周三',
-      ),
-    ];
+    CoffeeWidgetSyncService.syncLatest(null);
+    return [];
   }
 
   CoffeeRecord save(CoffeeRecordDraft draft) {
@@ -78,12 +48,13 @@ class MockCoffeeRecordRepository extends Notifier<List<CoffeeRecord>> {
     );
 
     state = [record, ...state];
+    CoffeeWidgetSyncService.syncLatest(record);
     return record;
   }
 
   CoffeeRecord? findById(String id) {
     for (final record in state) {
-      if (record.id == id) {
+      if (record.id == id && !record.isDeleted) {
         return record;
       }
     }
@@ -94,7 +65,7 @@ class MockCoffeeRecordRepository extends Notifier<List<CoffeeRecord>> {
     final now = DateTime.now();
     state = [
       for (final record in state)
-        if (record.id == id)
+        if (record.id == id && !record.isDeleted)
           record.copyWith(
             updatedAt: now,
             sourceType: draft.sourceType,
@@ -106,13 +77,28 @@ class MockCoffeeRecordRepository extends Notifier<List<CoffeeRecord>> {
         else
           record,
     ];
+    CoffeeWidgetSyncService.syncLatest(_latestActiveRecord);
   }
 
   void delete(String id) {
+    final now = DateTime.now();
     state = [
       for (final record in state)
-        if (record.id != id) record,
+        if (record.id == id && !record.isDeleted)
+          record.copyWith(isDeleted: true, deletedAt: now, updatedAt: now)
+        else
+          record,
     ];
+    CoffeeWidgetSyncService.syncLatest(_latestActiveRecord);
+  }
+
+  CoffeeRecord? get _latestActiveRecord {
+    for (final record in state) {
+      if (!record.isDeleted) {
+        return record;
+      }
+    }
+    return null;
   }
 
   String? _normalizeOptional(String? value) {

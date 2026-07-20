@@ -22,6 +22,18 @@ class AppColors {
   static const coffeeVisualSurface = Color(0xB8FFFFFF);
   static const coffeeStickerOutline = Color(0xFFFFFFFF);
   static const coffeeStickerShadow = Color(0x1F5A4636);
+  static const widgetCoffeeCard = Color(0xFFFFEFE4);
+  static const widgetLatteGlassSurface = Color(0x75FFF8F3);
+  static const widgetLatteGlassBorder = Color(0x47FFFFFF);
+  static const widgetLatteGlassHighlight = Color(0x33FFFFFF);
+  static const widgetLatteGlassTextProtection = Color(0x25FFF4E8);
+  static const widgetLatteGlassTextLift = Color(0x0EFFFDF8);
+  static const widgetLatteGlassShadow = Color(0x147C5C46);
+  static const widgetLatteGlassInnerShadow = Color(0x0A000000);
+  static const widgetAddButtonSurface = Color(0x35FFFFFF);
+  static const widgetAddButtonBorder = Color(0x45FFFFFF);
+  static const widgetAddButtonIcon = Color(0xCC6B4E3D);
+  static const widgetStickerShadow = Color(0x145A4636);
   static const previewBackground = Color(0xFFF7F0EA);
   static const previewShadow = Color(0x1A5A4636);
   static const cardShadow = Color(0x145A4636);
@@ -37,6 +49,7 @@ class AppColors {
   static const homeEditActionSurface = Color(0xFFFFF7F2);
   static const homeDeleteActionSurface = Color(0xFFFFECEC);
   static const homeDeleteActionText = Color(0xFF9A6A62);
+  static const homePrimaryButton = Color(0xFFB08F78);
   static const disabledButton = Color(0xFFE4DAD2);
   static const disabledButtonText = Color(0xFFA88E7E);
   static const journalMonthLabel = Color(0xFF9E7D66);

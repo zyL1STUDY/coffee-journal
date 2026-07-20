@@ -1,7 +1,10 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/home_ai_copy.dart';
 import '../../../core/router/app_route.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimensions.dart';
@@ -447,11 +450,15 @@ class ProfileLanguagePage extends StatelessWidget {
   }
 }
 
-class ProfileWidgetsPage extends StatelessWidget {
+class ProfileWidgetsPage extends ConsumerWidget {
   const ProfileWidgetsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final widgetCoffee = _WidgetCoffeeData.fromRecords(
+      ref.watch(coffeeRecordRepositoryProvider),
+    );
+
     return _ProfileDetailScaffold(
       title: '桌面小组件',
       children: [
@@ -463,25 +470,16 @@ class ProfileWidgetsPage extends StatelessWidget {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Small Widget',
-                  style: AppTypography.profileDetailSectionTitle,
-                ),
-                SizedBox(height: 12),
-                Center(child: _SmallWidgetPreview()),
-                SizedBox(height: 16),
-                Divider(height: 1, color: AppColors.latteGlassBorder),
-                SizedBox(height: 16),
-                Text(
+              children: [
+                const Text(
                   'Medium Widget',
                   style: AppTypography.profileDetailSectionTitle,
                 ),
-                SizedBox(height: 12),
-                Center(child: _MediumWidgetPreview()),
-                SizedBox(height: 16),
-                Divider(height: 1, color: AppColors.latteGlassBorder),
-                _ProfileDetailRow(
+                const SizedBox(height: 12),
+                Center(child: _MediumWidgetPreview(coffee: widgetCoffee)),
+                const SizedBox(height: 16),
+                const Divider(height: 1, color: AppColors.latteGlassBorder),
+                const _ProfileDetailRow(
                   data: _ProfileDetailRowData(title: '如何添加到桌面', trailing: '›'),
                 ),
               ],
@@ -490,6 +488,44 @@ class ProfileWidgetsPage extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _WidgetCoffeeData {
+  const _WidgetCoffeeData({
+    required this.name,
+    required this.time,
+    required this.aiMessage,
+  });
+
+  factory _WidgetCoffeeData.fromRecords(List<CoffeeRecord> records) {
+    final record = records.firstOrNull;
+    if (record == null) {
+      return const _WidgetCoffeeData(
+        name: '还没有咖啡',
+        time: '--:--',
+        aiMessage: '记录一杯后会出现在这里',
+      );
+    }
+
+    final drinkName = record.drinkName?.trim();
+    return _WidgetCoffeeData(
+      name: drinkName == null || drinkName.isEmpty
+          ? record.sourceName
+          : drinkName,
+      time: _formatWidgetTime(record.createdAt),
+      aiMessage: HomeAiCopy.widgetSentence,
+    );
+  }
+
+  final String name;
+  final String time;
+  final String aiMessage;
+
+  static String _formatWidgetTime(DateTime value) {
+    final hour = value.hour.toString().padLeft(2, '0');
+    final minute = value.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 }
 
@@ -531,16 +567,64 @@ class _ProfilePrivacyPageState extends State<ProfilePrivacyPage> {
                   ),
                 ),
                 const Divider(height: 1, color: AppColors.latteGlassBorder),
-                const _ProfileDetailRow(
-                  data: _ProfileDetailRowData(title: '隐私政策', trailing: '›'),
+                _ProfileDetailRow(
+                  data: const _ProfileDetailRowData(
+                    title: '隐私政策',
+                    trailing: '›',
+                  ),
+                  onTap: () => context.push(AppRoute.profilePrivacyPolicy.path),
                 ),
                 const Divider(height: 1, color: AppColors.latteGlassBorder),
-                const _ProfileDetailRow(
-                  data: _ProfileDetailRowData(title: '用户协议', trailing: '›'),
+                _ProfileDetailRow(
+                  data: const _ProfileDetailRowData(
+                    title: '用户协议',
+                    trailing: '›',
+                  ),
+                  onTap: () => context.push(AppRoute.profileTerms.path),
                 ),
               ],
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class ProfilePrivacyPolicyPage extends StatelessWidget {
+  const ProfilePrivacyPolicyPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const _ProfileDetailScaffold(
+      title: '隐私政策',
+      children: [
+        _LegalTextCard(
+          paragraphs: [
+            'Coffee Journal MVP 当前采用匿名本地模式，不要求注册账号，也不上传个人身份信息。',
+            '咖啡记录、备注和照片入口用于帮助用户保存自己的咖啡记忆。当前版本仍处于 MVP 阶段，真实相机 / 相册、云同步和正式 AI 服务会在后续版本继续完善。',
+            '如果未来接入 AI、云端同步或数据导出，产品会在正式上线前补充完整隐私条款，并说明数据使用、存储和删除方式。',
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class ProfileTermsPage extends StatelessWidget {
+  const ProfileTermsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const _ProfileDetailScaffold(
+      title: '用户协议',
+      children: [
+        _LegalTextCard(
+          paragraphs: [
+            'Coffee Journal MVP 用于记录咖啡和日常记忆，当前版本以个人学习、作品集展示和产品验证为主。',
+            '产品中的 AI 文案定位为轻量观察和记录辅助，不提供健康建议、心理咨询、消费建议或其他专业判断。',
+            'MVP 后续会继续补充本地持久化、真实图片选择、AI 生成、同步和发布准备。正式上线前会更新完整用户协议。',
+          ],
         ),
       ],
     );
@@ -577,7 +661,7 @@ class ProfileAboutPage extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Designed with ☕ in Australia.',
+                  'Designed with Ziyu in Australia.',
                   style: AppTypography.profileDetailMeta,
                 ),
                 SizedBox(height: 16),
@@ -754,9 +838,10 @@ class _ProfileListCard extends StatelessWidget {
 }
 
 class _ProfileDetailRow extends StatelessWidget {
-  const _ProfileDetailRow({required this.data});
+  const _ProfileDetailRow({required this.data, this.onTap});
 
   final _ProfileDetailRowData data;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -764,32 +849,76 @@ class _ProfileDetailRow extends StatelessWidget {
       color: data.isDisabled ? AppColors.textMuted : AppColors.textPrimary,
     );
 
-    return SizedBox(
-      height: AppDimensions.profileDetailRowHeight,
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text(data.title, style: titleStyle)],
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: data.isDisabled ? null : onTap,
+      child: SizedBox(
+        height: AppDimensions.profileDetailRowHeight,
+        child: Row(
+          children: [
+            SizedBox(
+              width: 196,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    data.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: titleStyle,
+                  ),
+                ],
+              ),
             ),
-          ),
-          if (data.isSelected)
-            const _SelectedDot()
-          else if (data.trailing != null)
-            Text(
-              data.trailing!,
-              style: data.trailing == '›'
-                  ? AppTypography.profileChevron
-                  : AppTypography.profileDetailMeta.copyWith(
-                      color: data.isDisabled
-                          ? AppColors.textMuted
-                          : AppColors.textSecondary,
-                      fontSize: data.isDisabled ? 12 : null,
-                    ),
-            ),
-        ],
+            const Spacer(),
+            if (data.isSelected)
+              const _SelectedDot()
+            else if (data.trailing != null)
+              SizedBox(
+                width: data.trailing == '›' ? 12 : 84,
+                child: Text(
+                  data.trailing!,
+                  textAlign: TextAlign.right,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: data.trailing == '›'
+                      ? AppTypography.profileChevron
+                      : AppTypography.profileDetailMeta.copyWith(
+                          color: data.isDisabled
+                              ? AppColors.textMuted
+                              : AppColors.textSecondary,
+                          fontSize: data.isDisabled ? 12 : null,
+                        ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LegalTextCard extends StatelessWidget {
+  const _LegalTextCard({required this.paragraphs});
+
+  final List<String> paragraphs;
+
+  @override
+  Widget build(BuildContext context) {
+    return LatteGlassCard(
+      width: AppDimensions.profileDetailCardWidth,
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.profileDetailCardPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var index = 0; index < paragraphs.length; index++) ...[
+              Text(paragraphs[index], style: AppTypography.profileDetailBody),
+              if (index != paragraphs.length - 1) const SizedBox(height: 14),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -911,84 +1040,86 @@ class _CoffeeLogoMark extends StatelessWidget {
   }
 }
 
-class _SmallWidgetPreview extends StatelessWidget {
-  const _SmallWidgetPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: AppDimensions.profileWidgetSmallSize,
-      height: AppDimensions.profileWidgetSmallSize,
-      padding: const EdgeInsets.all(14),
-      decoration: _widgetDecoration(AppRadius.recordField),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: const [
-              _CoffeeLogoMark(size: 28),
-              Spacer(),
-              Text('Today', style: AppTypography.profileDetailMeta),
-            ],
-          ),
-          const Spacer(),
-          const Text('1', style: AppTypography.profileWidgetValue),
-          const SizedBox(height: 2),
-          const Text('杯咖啡', style: AppTypography.profileDetailSectionTitle),
-          const SizedBox(height: 8),
-          Container(
-            width: 58,
-            height: 6,
-            decoration: BoxDecoration(
-              color: AppColors.primarySoft72,
-              borderRadius: BorderRadius.circular(AppRadius.pill),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _MediumWidgetPreview extends StatelessWidget {
-  const _MediumWidgetPreview();
+  const _MediumWidgetPreview({required this.coffee});
+
+  final _WidgetCoffeeData coffee;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: AppDimensions.profileWidgetMediumWidth,
       height: AppDimensions.profileWidgetMediumHeight,
-      padding: const EdgeInsets.all(14),
-      decoration: _widgetDecoration(28),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Row(
-            children: [
-              _CoffeeLogoMark(size: 34),
-              SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Coffee Journal',
-                  style: AppTypography.profileDetailSectionTitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Text('今日', style: AppTypography.profileDetailMeta),
-            ],
+      decoration: _widgetStageDecoration(),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            left: AppDimensions.profileWidgetMediumCardLeft,
+            top: AppDimensions.profileWidgetMediumCardTop,
+            child: const _WidgetLatteGlassCard(
+              width: AppDimensions.profileWidgetMediumCardWidth,
+              height: AppDimensions.profileWidgetMediumCardHeight,
+            ),
           ),
-          SizedBox(height: 12),
-          Text('一杯热拿铁，刚刚好。', style: AppTypography.profileDetailBody),
-          Spacer(),
-          Row(
-            children: [
-              _WidgetMetric(value: '1', label: '今日'),
-              SizedBox(width: 8),
-              _WidgetMetric(value: '3', label: '连续'),
-              SizedBox(width: 8),
-              _WidgetMetric(value: '18', label: '本月'),
-            ],
+          const Positioned(
+            left: AppDimensions.profileWidgetMediumStickerLeft,
+            top: AppDimensions.profileWidgetMediumStickerTop,
+            child: _WidgetCoffeeSticker(
+              width: AppDimensions.profileWidgetMediumStickerWidth,
+              height: AppDimensions.profileWidgetMediumStickerHeight,
+            ),
+          ),
+          Positioned(
+            left: AppDimensions.profileWidgetMediumTextLeft,
+            top: AppDimensions.profileWidgetMediumTextTop,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: AppDimensions.profileWidgetMediumTextWidth,
+                  child: Text(
+                    coffee.time,
+                    style: AppTypography.widgetMediumTime,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                SizedBox(
+                  width: AppDimensions.profileWidgetMediumTextWidth,
+                  child: Text(
+                    coffee.name,
+                    style: AppTypography.widgetMediumTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 7),
+                SizedBox(
+                  width: AppDimensions.profileWidgetMediumTextWidth,
+                  child: Text(
+                    coffee.aiMessage,
+                    style: AppTypography.widgetMediumMeta,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            left:
+                AppDimensions.profileWidgetMediumCardLeft +
+                AppDimensions.profileWidgetMediumCardWidth -
+                AppDimensions.profileWidgetMediumAddButtonSize -
+                AppDimensions.profileWidgetMediumAddButtonRight,
+            top:
+                AppDimensions.profileWidgetMediumCardTop +
+                AppDimensions.profileWidgetMediumAddButtonTop,
+            child: _WidgetAddButton(
+              onTap: () => context.push(AppRoute.record.path),
+            ),
           ),
         ],
       ),
@@ -996,33 +1127,76 @@ class _MediumWidgetPreview extends StatelessWidget {
   }
 }
 
-class _WidgetMetric extends StatelessWidget {
-  const _WidgetMetric({required this.value, required this.label});
+class _WidgetCoffeeSticker extends StatelessWidget {
+  const _WidgetCoffeeSticker({required this.width, required this.height});
 
-  final String value;
-  final String label;
+  final double width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        height: 34,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: AppColors.latteGlassHighlight,
-          borderRadius: BorderRadius.circular(AppRadius.small),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    const sticker = 'assets/images/home/coffee_sticker.png';
+
+    return SizedBox(
+      width: width,
+      height: height,
+      child: Transform.rotate(
+        angle: -0.07,
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Text(
-              value,
-              style: AppTypography.profileMenuLabel.copyWith(
-                fontWeight: FontWeight.w700,
+            Positioned.fill(
+              child: Transform.translate(
+                offset: const Offset(
+                  AppDimensions.homeCoffeeStickerShadowOffsetX,
+                  AppDimensions.homeCoffeeStickerShadowOffsetY,
+                ),
+                child: ImageFiltered(
+                  imageFilter: ui.ImageFilter.blur(
+                    sigmaX: AppDimensions.homeCoffeeStickerShadowBlur,
+                    sigmaY: AppDimensions.homeCoffeeStickerShadowBlur,
+                  ),
+                  child: Opacity(
+                    opacity: 0.2,
+                    child: ColorFiltered(
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.coffeeStickerShadow,
+                        BlendMode.srcIn,
+                      ),
+                      child: Image.asset(
+                        sticker,
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.high,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-            const SizedBox(width: 3),
-            Text(label, style: AppTypography.profileDetailMeta),
+            for (final offset in _stickerOutlineOffsets)
+              Positioned.fill(
+                child: Transform.translate(
+                  offset: offset,
+                  child: ColorFiltered(
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.coffeeStickerOutline,
+                      BlendMode.srcIn,
+                    ),
+                    child: Image.asset(
+                      sticker,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                    ),
+                  ),
+                ),
+              ),
+            Positioned.fill(
+              child: Image.asset(
+                sticker,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+              ),
+            ),
           ],
         ),
       ),
@@ -1030,17 +1204,172 @@ class _WidgetMetric extends StatelessWidget {
   }
 }
 
-BoxDecoration _widgetDecoration(double radius) {
-  return BoxDecoration(
-    color: AppColors.surfaceTint,
-    borderRadius: BorderRadius.circular(radius),
-    border: Border.all(color: AppColors.outline.withAlpha(130)),
-    boxShadow: const [
-      BoxShadow(
-        color: AppColors.homeCardShadow,
-        blurRadius: 12,
-        offset: Offset(0, 6),
+const _stickerOutlineOffsets = [
+  Offset(-2.8, 0),
+  Offset(2.8, 0),
+  Offset(0, -2.8),
+  Offset(0, 2.8),
+  Offset(-2, -2),
+  Offset(2, -2),
+  Offset(-2, 2),
+  Offset(2, 2),
+  Offset(-3.6, -1.2),
+  Offset(3.6, -1.2),
+  Offset(-3.6, 1.2),
+  Offset(3.6, 1.2),
+  Offset(-1.2, -3.6),
+  Offset(1.2, -3.6),
+  Offset(-1.2, 3.6),
+  Offset(1.2, 3.6),
+];
+
+class _WidgetLatteGlassCard extends StatelessWidget {
+  const _WidgetLatteGlassCard({required this.width, required this.height});
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(AppRadius.widgetMedium);
+
+    return ClipRRect(
+      borderRadius: radius,
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: AppColors.widgetLatteGlassSurface,
+            borderRadius: radius,
+            border: Border.all(color: AppColors.widgetLatteGlassBorder),
+            boxShadow: const [
+              BoxShadow(
+                color: AppColors.widgetLatteGlassShadow,
+                blurRadius: 12,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                left: 18,
+                top: 7,
+                child: _SoftGlassPatch(
+                  width: 236,
+                  height: 22,
+                  color: AppColors.widgetLatteGlassHighlight,
+                  blur: 14,
+                  radius: 16,
+                ),
+              ),
+              const Positioned(
+                left: 94,
+                top: 19,
+                child: _SoftGlassPatch(
+                  width: 158,
+                  height: 72,
+                  color: AppColors.widgetLatteGlassTextProtection,
+                  blur: 20,
+                  radius: 20,
+                ),
+              ),
+              const Positioned(
+                left: 106,
+                top: 24,
+                child: _SoftGlassPatch(
+                  width: 132,
+                  height: 54,
+                  color: AppColors.widgetLatteGlassTextLift,
+                  blur: 16,
+                  radius: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-    ],
-  );
+    );
+  }
+}
+
+class _SoftGlassPatch extends StatelessWidget {
+  const _SoftGlassPatch({
+    required this.width,
+    required this.height,
+    required this.color,
+    required this.blur,
+    required this.radius,
+  });
+
+  final double width;
+  final double height;
+  final Color color;
+  final double blur;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    return ImageFiltered(
+      imageFilter: ui.ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      ),
+    );
+  }
+}
+
+class _WidgetAddButton extends StatelessWidget {
+  const _WidgetAddButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: '记录一杯',
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+            child: Container(
+              width: AppDimensions.profileWidgetMediumAddButtonSize,
+              height: AppDimensions.profileWidgetMediumAddButtonSize,
+              decoration: BoxDecoration(
+                color: AppColors.widgetAddButtonSurface,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.widgetAddButtonBorder),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x08000000),
+                    blurRadius: 5,
+                    offset: Offset(0, 1.5),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.add_rounded,
+                size: 20,
+                color: AppColors.widgetAddButtonIcon,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+BoxDecoration _widgetStageDecoration() {
+  return const BoxDecoration(color: AppColors.background);
 }

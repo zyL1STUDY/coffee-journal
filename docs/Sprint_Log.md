@@ -340,3 +340,56 @@
 
 - Profile 主页面和 5 个二级页面已完成 MVP 静态体验。
 - 当前仍未接入账号登录、真实同步、数据导出、隐私政策详情页等非 MVP 功能。
+
+## 2026-07-15 Daily Development Log
+
+日期：2026-07-15
+
+今日完成内容：
+
+- 继续完善桌面小组件体验，并将范围收敛到 Medium Widget 为主。
+- 基于 Figma 最终版开发 Coffee Journal Medium Widget：
+  - 左侧 Coffee Sticker 悬浮在卡片上方。
+  - 右侧展示最近一杯咖啡的时间、名称和 Home 同源 AI 一句话。
+  - 保留右上角 `+` 按钮，点击后进入 Record Flow。
+  - 删除 Small Widget 展示，避免 MVP 中出现质量不足的组件形态。
+- 多轮调整 Widget 视觉方向：
+  - 从普通卡片调整为 Sticker + Card 语言。
+  - 探索 Latte Liquid Glass 材质，并最终保留温暖、轻量、可读性更稳定的版本。
+  - 字体统一回深咖色体系，不使用白色字体。
+  - 加号按钮降低视觉重量。
+  - AI 文案区域加宽，减少不必要换行。
+  - Sticker 改回 Home 页面同款咖啡贴纸，并修复矩形阴影导致的模糊底问题。
+  - Sticker 放大、轻微倾斜，并增加更粗的纯白贴纸边，使其更像日历贴纸。
+- 新增 iOS Widget Extension 基础实现：
+  - 支持 `.systemMedium` 桌面组件。
+  - 从 App Group 读取最近咖啡名称、时间和 AI 文案。
+  - 通过 URL Scheme 预留从 Widget `+` 按钮进入记录流程。
+- 同步 Record Repository 写入 Widget 所需的最近咖啡数据。
+- 抽出 Home 与 Widget 共用的 AI 一句话文案常量，保持 Home 与 Widget 内容一致。
+- 补充 / 调整 Widget Tests，继续覆盖 Home、Record、Journal、Profile 关键路径。
+- 已运行并通过：
+  - `flutter analyze`
+  - `flutter test`
+
+修改原因：
+
+- MVP 进入收尾阶段，需要让 Profile 中的「桌面小组件」不再只是占位，而是能展示 Coffee Journal 记忆感和产品质感的真实入口。
+- Widget 的目标不是信息密度，而是把最近一杯咖啡变成温暖、轻量、可放在桌面的视觉记忆。
+- Small Widget 当前视觉表现不稳定，先从 MVP 展示中移除，把质量集中在 Medium Widget。
+
+新增或修改的 commit：
+
+- 今日没有新增 commit。
+- 当前改动尚未提交、尚未推送，主要集中在桌面 Widget、iOS Widget Extension、Widget 数据同步和测试覆盖。
+
+验证结果：
+
+- `flutter analyze`：通过。
+- `flutter test`：通过，11 个测试全部通过。
+- iOS Widget 原生编译尚未在当前环境验证；当前环境找不到 `xcodebuild / simctl`。
+
+当前 MVP 状态：
+
+- Home、Record Flow、Journal、Profile 与桌面组件入口已基本完成 MVP 体验。
+- 后续仍需要继续做细节视觉优化、真实数据 / 相机 / 相册 / AI / Supabase 接入，以及 iOS Widget 真机编译验证。

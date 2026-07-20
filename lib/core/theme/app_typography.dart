@@ -13,9 +13,9 @@ class AppTypography {
   ];
 
   static const greeting = TextStyle(
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: FontWeight.w600,
-    height: 35 / 30,
+    height: 34 / 28,
     letterSpacing: 0,
     color: AppColors.textPrimary,
     fontFamilyFallback: fontFamilyFallback,
@@ -26,14 +26,14 @@ class AppTypography {
     fontWeight: FontWeight.w400,
     height: 22 / 15,
     letterSpacing: 0,
-    color: AppColors.textMuted,
+    color: AppColors.textSecondary,
     fontFamilyFallback: fontFamilyFallback,
   );
 
   static const todayCardSentence = TextStyle(
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: FontWeight.w500,
-    height: 31 / 18,
+    height: 22 / 15,
     letterSpacing: 0,
     color: AppColors.aiPromptText,
     fontFamilyFallback: fontFamilyFallback,
@@ -48,10 +48,19 @@ class AppTypography {
     fontFamilyFallback: fontFamilyFallback,
   );
 
-  static const coffeeCardTitle = TextStyle(
-    fontSize: 16,
+  static const homeRecentSectionTitle = TextStyle(
+    fontSize: 18,
     fontWeight: FontWeight.w600,
-    height: 21 / 16,
+    height: 24 / 18,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const coffeeCardTitle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    height: 20 / 15,
     letterSpacing: 0,
     color: AppColors.textPrimary,
     fontFamilyFallback: fontFamilyFallback,
@@ -62,7 +71,7 @@ class AppTypography {
     fontWeight: FontWeight.w400,
     height: 18 / 13,
     letterSpacing: 0,
-    color: AppColors.textMuted,
+    color: AppColors.textSecondary,
     fontFamilyFallback: fontFamilyFallback,
   );
 
@@ -465,6 +474,42 @@ class AppTypography {
     height: 30 / 24,
     letterSpacing: 0,
     color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const widgetMediumTitle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w700,
+    height: 20 / 15,
+    letterSpacing: 0,
+    color: AppColors.textPrimary,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const widgetMediumMeta = TextStyle(
+    fontSize: 10.5,
+    fontWeight: FontWeight.w600,
+    height: 15 / 10.5,
+    letterSpacing: 0,
+    color: AppColors.textMuted,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const widgetMediumTime = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
+    height: 16 / 12,
+    letterSpacing: 0,
+    color: AppColors.textMuted,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
+  static const widgetMediumEyebrow = TextStyle(
+    fontSize: 8,
+    fontWeight: FontWeight.w700,
+    height: 10 / 8,
+    letterSpacing: 0,
+    color: AppColors.textMuted,
     fontFamilyFallback: fontFamilyFallback,
   );
 

@@ -21,6 +21,8 @@ class AppRadius {
   static const journalDay = 8.0;
   static const memoryNote = 18.0;
   static const memoryAction = 23.0;
+  static const widgetSmall = 24.0;
+  static const widgetMedium = 24.0;
   static const large = 20.0;
   static const deviceFrame = 36.0;
   static const pill = 999.0;

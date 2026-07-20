@@ -10,6 +10,8 @@ enum AppRoute {
   profileLanguage('/profile/language'),
   profileWidgets('/profile/widgets'),
   profilePrivacy('/profile/privacy'),
+  profilePrivacyPolicy('/profile/privacy/policy'),
+  profileTerms('/profile/privacy/terms'),
   profileAbout('/profile/about');
 
   const AppRoute(this.path);

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/home_ai_copy.dart';
 import '../../../core/router/app_route.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimensions.dart';
@@ -33,7 +34,7 @@ class _CoffeePreview {
           : drinkName,
       meta: record.note?.trim().isNotEmpty == true
           ? record.note!.trim()
-          : '${record.sourceName} · 刚刚',
+          : '${record.sourceName} · ${_formatRecordTime(record.createdAt)}',
     );
   }
 
@@ -50,7 +51,8 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final savedRecords = ref.watch(coffeeRecordRepositoryProvider);
     final coffees = [
-      for (final record in savedRecords) _CoffeePreview.fromRecord(record),
+      for (final record in savedRecords)
+        if (!record.isDeleted) _CoffeePreview.fromRecord(record),
     ];
 
     return SizedBox(
@@ -70,7 +72,7 @@ class HomePage extends ConsumerWidget {
             children: [
               const _HomeHeader(),
               const SizedBox(height: AppDimensions.homeHeaderToTodayCardGap),
-              const _TodayCard(),
+              const Align(alignment: Alignment.center, child: _TodayCard()),
               const SizedBox(height: AppDimensions.homeTodayCardToButtonGap),
               _RecordCoffeeButton(
                 onPressed: () => context.go(AppRoute.record.path),
@@ -94,7 +96,8 @@ class _HomeHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('早安', style: AppTypography.greeting),
-        Text('星期五 · 6月26日', style: AppTypography.date),
+        const SizedBox(height: 6),
+        Text(_formatTodayLabel(DateTime.now()), style: AppTypography.date),
       ],
     );
   }
@@ -123,13 +126,15 @@ class _TodayCard extends StatelessWidget {
               const SizedBox(
                 width: AppDimensions.homeTodayCardCopyWidth,
                 height: AppDimensions.homeTodayCardCopyHeight,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top: AppDimensions.homeTodayCardTextTop,
-                  ),
-                  child: Text(
-                    '今天有点冷，\n热拿铁应该很舒服',
-                    style: AppTypography.todayCardSentence,
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: AppDimensions.homeTodayCardTextTop,
+                    ),
+                    child: Text(
+                      HomeAiCopy.sentence,
+                      style: AppTypography.todayCardSentence,
+                    ),
                   ),
                 ),
               ),
@@ -177,20 +182,23 @@ class _RecentCoffeeSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('最近的咖啡', style: AppTypography.sectionTitle),
+        Text('最近的咖啡', style: AppTypography.homeRecentSectionTitle),
         const SizedBox(height: AppDimensions.homeRecentTitleToCardGap),
-        for (var index = 0; index < coffees.length; index++) ...[
-          _SwipeableRecentCoffeeTile(
-            key: ValueKey(coffees[index].id),
-            coffee: coffees[index],
-            onEdit: () => context.go(_editPath(coffees[index])),
-            onDelete: () => ref
-                .read(coffeeRecordRepositoryProvider.notifier)
-                .delete(coffees[index].id),
-          ),
-          if (index != coffees.length - 1)
-            const SizedBox(height: AppDimensions.homeRecentCardGap),
-        ],
+        if (coffees.isEmpty)
+          const _RecentCoffeeEmptyState()
+        else
+          for (var index = 0; index < coffees.length; index++) ...[
+            _SwipeableRecentCoffeeTile(
+              key: ValueKey(coffees[index].id),
+              coffee: coffees[index],
+              onEdit: () => context.go(_editPath(coffees[index])),
+              onDelete: () => ref
+                  .read(coffeeRecordRepositoryProvider.notifier)
+                  .delete(coffees[index].id),
+            ),
+            if (index != coffees.length - 1)
+              const SizedBox(height: AppDimensions.homeRecentCardGap),
+          ],
       ],
     );
   }
@@ -202,6 +210,36 @@ class _RecentCoffeeSection extends ConsumerWidget {
       CoffeeSourceType.homemade => AppRoute.homemadeRecord.path,
     };
     return '$basePath?editId=${coffee.id}';
+  }
+}
+
+class _RecentCoffeeEmptyState extends StatelessWidget {
+  const _RecentCoffeeEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: AppDimensions.homeCoffeeCardWidth,
+      height: AppDimensions.homeCoffeeCardHeight,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(color: AppColors.outline),
+        borderRadius: AppRadius.cardBorder,
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.homeCardShadow,
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: const Text(
+        '还没有记录，今天从第一杯开始。',
+        textAlign: TextAlign.center,
+        style: AppTypography.coffeeCardMeta,
+      ),
+    );
   }
 }
 
@@ -476,4 +514,28 @@ class _CoffeeSticker extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatTodayLabel(DateTime value) {
+  const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
+  final weekday = weekdays[value.weekday - 1];
+  final month = value.month.toString().padLeft(2, '0');
+  final day = value.day.toString().padLeft(2, '0');
+  return '星期$weekday · $month.$day';
+}
+
+String _formatRecordTime(DateTime value) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final recordDay = DateTime(value.year, value.month, value.day);
+  final time =
+      '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
+
+  if (recordDay == today) {
+    return time;
+  }
+  if (recordDay == today.subtract(const Duration(days: 1))) {
+    return '昨天';
+  }
+  return '${value.month}.${value.day}';
 }

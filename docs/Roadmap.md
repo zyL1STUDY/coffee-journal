@@ -60,15 +60,27 @@
 - 新增 Coffee Detail 的 Bottom Sheet 状态。
 - Coffee Detail 继续使用背景变暗 / 模糊感 + 底部弹层的交互语言。
 
+## Sprint 05：Flutter MVP 交互闭环
+
+状态：已完成 MVP A 档
+
+重点：
+
+- Home 使用真实当天日期，并支持首访空状态。
+- Record Flow 支持保存一杯咖啡并刷新首页。
+- Journal 接入当前记录数据，不再只展示静态演示月历。
+- Coffee Memory 展示真实记录内容，并支持删除二次确认。
+- Profile 补齐数据与隐私、隐私政策、用户协议等交付入口。
+- GitHub README 和文档索引调整为对外展示友好的结构。
+- 桌面小组件作为 iOS Medium Widget preview / prototype 保留，不声明完整发布能力。
+
 ## 后续方向
 
 后续可能推进：
 
-- 咖啡记录创建
-- Calendar 与 Journal 回顾体验
-- 相机拍摄
-- 本地持久化或后端集成
-- AI 咖啡记录
-- Profile 与 Settings
-- 将确认后的记录流程实现在 Flutter 中
-- 将 Journal 与 Coffee Detail 实现在 Flutter 中
+- 接入本地持久化，替换当前内存 Repository。
+- 接入真实相机 / 相册选择和权限失败状态。
+- 保存时生成 AI Message，并固定写入 Coffee Record。
+- 完成 iOS Widget 真机 / 模拟器验证。
+- 准备 TestFlight / App Store 发布材料。
+- 根据真实使用反馈继续优化记录流程和 Coffee Memory。
