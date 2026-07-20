@@ -393,3 +393,54 @@
 
 - Home、Record Flow、Journal、Profile 与桌面组件入口已基本完成 MVP 体验。
 - 后续仍需要继续做细节视觉优化、真实数据 / 相机 / 相册 / AI / Supabase 接入，以及 iOS Widget 真机编译验证。
+
+## 2026-07-20 Daily Development Log
+
+日期：2026-07-20
+
+今日完成内容：
+
+- 更新 Home / Journal / Profile 的 AI 提示视觉：
+  - 去掉 Home AI 区域咖啡图标。
+  - 替换为更贴近 iOS 26 Liquid Glass 感的轻量玻璃卡片。
+  - AI 文案改为打开页面时打字出现，并在逗号后自动换行。
+- 为 App 引入低饱和纸感背景：
+  - 新增 warm kraft paper 背景纹理资源。
+  - Home、Journal、Profile、Profile 二级页面和底部导航统一使用纸感背景。
+  - 将原本突兀的白色卡片、空状态、表单和弹层统一替换为低饱和纸色表面。
+- 继续优化 Home 页面细节：
+  - 最近咖啡空状态去掉外框，仅保留轻量提示文案。
+  - 「记录一杯」按钮缩短并居中，让它与上方 AI 卡片比例更协调。
+- 统一 Record Flow 的视觉表面：
+  - 来源选择弹层、输入框和放弃确认弹窗改为纸感表面。
+  - 保持原有底部弹层结构与流程不变。
+- 优化 Profile 桌面小组件详情页：
+  - Medium Widget 预览区域改为纸感底色。
+  - 修正 Widget 预览整体偏移问题，使组件在预览区域中视觉居中。
+  - 调整 Widget 玻璃层、加号按钮颜色，降低白色突兀感。
+- 优化底部导航交互：
+  - 去掉选中后的粉色背景。
+  - 鼠标悬停和点击时图标临时放大，松开后恢复原尺寸。
+  - 当前页通过图标线条加粗提示，不再依赖色块。
+- 删除旧的 AI Candy Glass 组件，新增通用纸感背景、Liquid Glass AI 卡片、打字文本和 AI 文案格式化工具。
+- 更新 Widget Tests，适配 AI 打字动画和当前页面结构。
+- 已运行并通过：
+  - `flutter analyze`
+  - `flutter test`
+
+修改原因：
+
+- 背景改为纸感后，原有纯白卡片和粉色选中态显得割裂，需要统一为更低饱和、更温暖的视觉体系。
+- AI 提示应更像轻量陪伴，而不是独立功能模块，因此减少图标和装饰，保留一句有生命感的文案。
+- 底部导航需要在纸感背景中保持安静，同时仍能让用户知道当前所在页面。
+
+新增或修改的 commit：
+
+- 今日已有提交：`9eecbe4 feat: prepare mvp portfolio release`
+- 本次准备提交：`style: polish paper texture and glass interactions`
+- 当前尚未推送，准备在日志更新后提交并推送 GitHub。
+
+验证结果：
+
+- `flutter analyze`：通过。
+- `flutter test`：通过，11 个测试全部通过。

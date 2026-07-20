@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_dimensions.dart';
-import '../theme/app_radius.dart';
+import '../../shared/widgets/app_paper_background.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({required this.navigationShell, super.key});
@@ -55,35 +55,38 @@ class _CoffeeBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: AppDimensions.mobileViewportWidth,
-      height: AppDimensions.bottomNavigationHeight,
-      padding: const EdgeInsets.fromLTRB(
-        AppDimensions.bottomNavigationPaddingLeft,
-        AppDimensions.bottomNavigationPaddingTop,
-        AppDimensions.bottomNavigationPaddingRight,
-        AppDimensions.bottomNavigationPaddingBottom,
-      ),
-      color: AppColors.bottomNavigation,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          for (var index = 0; index < _items.length; index++) ...[
-            _CoffeeNavigationTab(
-              item: _items[index],
-              isSelected: selectedIndex == index,
-              onTap: () => onDestinationSelected(index),
-            ),
-            if (index != _items.length - 1)
-              const SizedBox(width: AppDimensions.bottomNavigationTabGap),
-          ],
-        ],
+    return AppPaperBackground(
+      child: SizedBox(
+        width: AppDimensions.mobileViewportWidth,
+        height: AppDimensions.bottomNavigationHeight,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppDimensions.bottomNavigationPaddingLeft,
+            AppDimensions.bottomNavigationPaddingTop,
+            AppDimensions.bottomNavigationPaddingRight,
+            AppDimensions.bottomNavigationPaddingBottom,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (var index = 0; index < _items.length; index++) ...[
+                _CoffeeNavigationTab(
+                  item: _items[index],
+                  isSelected: selectedIndex == index,
+                  onTap: () => onDestinationSelected(index),
+                ),
+                if (index != _items.length - 1)
+                  const SizedBox(width: AppDimensions.bottomNavigationTabGap),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-class _CoffeeNavigationTab extends StatelessWidget {
+class _CoffeeNavigationTab extends StatefulWidget {
   const _CoffeeNavigationTab({
     required this.item,
     required this.isSelected,
@@ -95,31 +98,63 @@ class _CoffeeNavigationTab extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<_CoffeeNavigationTab> createState() => _CoffeeNavigationTabState();
+}
+
+class _CoffeeNavigationTabState extends State<_CoffeeNavigationTab> {
+  bool _isHovered = false;
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
-    final iconColor = isSelected ? AppColors.accent : AppColors.textMuted;
+    final iconColor = widget.isSelected
+        ? AppColors.accent
+        : AppColors.textMuted;
+    final iconScale = _isHovered || _isPressed
+        ? AppDimensions.bottomNavigationInteractionIconScale
+        : 1.0;
+    final strokeScale = widget.isSelected
+        ? AppDimensions.bottomNavigationSelectedStrokeScale
+        : 1.0;
 
     return Semantics(
-      label: item.semanticLabel,
-      selected: isSelected,
+      label: widget.item.semanticLabel,
+      selected: widget.isSelected,
       button: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Container(
-          width: AppDimensions.bottomNavigationTabWidth,
-          height: AppDimensions.bottomNavigationTabHeight,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primarySoft72 : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-          ),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() {
+          _isHovered = false;
+          _isPressed = false;
+        }),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            setState(() => _isPressed = false);
+            widget.onTap();
+          },
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapCancel: () => setState(() => _isPressed = false),
+          onTapUp: (_) => setState(() => _isPressed = false),
           child: SizedBox(
-            width: AppDimensions.bottomNavigationIconSize,
-            height: AppDimensions.bottomNavigationIconSize,
-            child: CustomPaint(
-              painter: _CoffeeNavigationIconPainter(
-                icon: item.icon,
-                color: iconColor,
+            width: AppDimensions.bottomNavigationTabWidth,
+            height: AppDimensions.bottomNavigationTabHeight,
+            child: Center(
+              child: AnimatedScale(
+                scale: iconScale,
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutBack,
+                child: SizedBox(
+                  width: AppDimensions.bottomNavigationIconSize,
+                  height: AppDimensions.bottomNavigationIconSize,
+                  child: CustomPaint(
+                    painter: _CoffeeNavigationIconPainter(
+                      icon: widget.item.icon,
+                      color: iconColor,
+                      strokeScale: strokeScale,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -142,10 +177,15 @@ class _CoffeeNavigationItem {
 enum _CoffeeNavigationIcon { drink, anniversary, profile }
 
 class _CoffeeNavigationIconPainter extends CustomPainter {
-  const _CoffeeNavigationIconPainter({required this.icon, required this.color});
+  const _CoffeeNavigationIconPainter({
+    required this.icon,
+    required this.color,
+    required this.strokeScale,
+  });
 
   final _CoffeeNavigationIcon icon;
   final Color color;
+  final double strokeScale;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -256,13 +296,15 @@ class _CoffeeNavigationIconPainter extends CustomPainter {
     return Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = width
+      ..strokeWidth = width * strokeScale
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
   }
 
   @override
   bool shouldRepaint(covariant _CoffeeNavigationIconPainter oldDelegate) {
-    return oldDelegate.icon != icon || oldDelegate.color != color;
+    return oldDelegate.icon != icon ||
+        oldDelegate.color != color ||
+        oldDelegate.strokeScale != strokeScale;
   }
 }

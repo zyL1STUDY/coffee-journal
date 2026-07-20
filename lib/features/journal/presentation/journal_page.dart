@@ -9,8 +9,11 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../shared/widgets/ai_candy_glass_card.dart';
+import '../../../core/utils/ai_prompt_formatter.dart';
+import '../../../shared/widgets/app_paper_background.dart';
 import '../../../shared/widgets/latte_glass_card.dart';
+import '../../../shared/widgets/liquid_glass_prompt_card.dart';
+import '../../../shared/widgets/typing_prompt_text.dart';
 import '../../record/application/coffee_record_repository.dart';
 import '../../record/domain/coffee_record.dart';
 import '../../record/presentation/record_flow_widgets.dart';
@@ -85,8 +88,7 @@ class _JournalPageState extends ConsumerState<JournalPage>
     ]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     final memories = _buildMemories(activeRecords, now);
 
-    return ColoredBox(
-      color: AppColors.background,
+    return AppPaperBackground(
       child: SizedBox(
         width: AppDimensions.mobileViewportWidth,
         height: AppDimensions.journalContentHeight,
@@ -289,16 +291,17 @@ class _JournalMonthlySummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AiCandyGlassCard(
-      radius: AppRadius.card,
-      child: Center(
+    final summary = records.isEmpty
+        ? '记录一杯后，这里会慢慢长出你的咖啡月历。'
+        : '这个月已经留下 ${records.length} 杯咖啡记忆。';
+
+    return LiquidGlassPromptCard(
+      child: Align(
+        alignment: Alignment.centerLeft,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 22),
-          child: Text(
-            records.isEmpty
-                ? '记录一杯后，这里会慢慢长出你的咖啡月历。'
-                : '这个月已经留下 ${records.length} 杯咖啡记忆。',
-            textAlign: TextAlign.center,
+          child: TypingPromptText(
+            text: AiPromptFormatter.lineBreakAfterComma(summary),
             style: AppTypography.journalSummary,
           ),
         ),
@@ -752,13 +755,13 @@ class _CoffeeMemorySheet extends ConsumerWidget {
               top: AppDimensions.memoryAiTop,
               width: AppDimensions.memoryAiWidth,
               height: AppDimensions.memoryAiHeight,
-              child: AiCandyGlassCard(
-                child: Center(
+              child: LiquidGlassPromptCard(
+                child: Align(
+                  alignment: Alignment.centerLeft,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: Text(
-                      aiMessage,
-                      textAlign: TextAlign.center,
+                    child: TypingPromptText(
+                      text: AiPromptFormatter.lineBreakAfterComma(aiMessage),
                       style: AppTypography.memoryAiMessage,
                     ),
                   ),

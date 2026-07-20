@@ -88,7 +88,7 @@ class _RecordOverlayScaffoldState extends State<RecordOverlayScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.homeMistBackground,
       body: SizedBox(
         width: AppDimensions.mobileViewportWidth,
         height: AppDimensions.mobileViewportHeight,
@@ -158,7 +158,7 @@ class RecordSheet extends StatelessWidget {
         AppDimensions.recordSheetBottomPadding,
       ),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: AppColors.paperSurface,
         borderRadius: borderRadius,
         boxShadow: const [
           BoxShadow(
@@ -523,7 +523,7 @@ class RecordSaveButton extends StatelessWidget {
           '保存这一杯',
           style: AppTypography.recordSaveButton.copyWith(
             color: isEnabled
-                ? AppColors.background
+                ? AppColors.paperSurface
                 : AppColors.disabledButtonText,
           ),
         ),
@@ -543,7 +543,7 @@ class RecordDiscardDialog extends StatelessWidget {
         width: AppDimensions.recordDiscardDialogWidth,
         padding: const EdgeInsets.all(AppDimensions.recordDiscardDialogPadding),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: AppColors.paperSurface,
           borderRadius: BorderRadius.circular(AppRadius.recordDiscardDialog),
           boxShadow: const [
             BoxShadow(
@@ -609,7 +609,7 @@ class _RecordDiscardActionState extends State<_RecordDiscardAction> {
         ? AppColors.textSecondary
         : AppColors.surfaceTint;
     final textColor = widget.isPrimary
-        ? AppColors.background
+        ? AppColors.paperSurface
         : AppColors.textSecondary;
 
     return GestureDetector(

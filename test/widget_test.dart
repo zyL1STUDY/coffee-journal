@@ -24,6 +24,8 @@ void main() {
 
     expect(find.text('早安'), findsOneWidget);
     expect(find.textContaining('星期'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 450));
+    await tester.pump(const Duration(milliseconds: 1200));
     expect(find.text('今天有点冷，\n热拿铁应该很舒服'), findsOneWidget);
     expect(find.text('记录一杯'), findsOneWidget);
     expect(find.text('最近的咖啡'), findsOneWidget);

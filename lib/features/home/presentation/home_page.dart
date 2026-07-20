@@ -2,7 +2,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/home_ai_copy.dart';
@@ -11,10 +10,13 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../shared/widgets/ai_candy_glass_card.dart';
+import '../../../core/utils/ai_prompt_formatter.dart';
 import '../../record/application/coffee_record_repository.dart';
 import '../../record/domain/coffee_record.dart';
+import '../../../shared/widgets/app_paper_background.dart';
+import '../../../shared/widgets/liquid_glass_prompt_card.dart';
 import '../../../shared/widgets/primary_action_button.dart';
+import '../../../shared/widgets/typing_prompt_text.dart';
 
 class _CoffeePreview {
   const _CoffeePreview({
@@ -58,28 +60,32 @@ class HomePage extends ConsumerWidget {
     return SizedBox(
       width: AppDimensions.homeContentWidth,
       height: AppDimensions.homeContentHeight,
-      child: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppDimensions.homeContentHorizontalPadding,
-            AppDimensions.homeContentTopPadding,
-            AppDimensions.homeContentHorizontalPadding,
-            AppDimensions.homeContentBottomPadding,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _HomeHeader(),
-              const SizedBox(height: AppDimensions.homeHeaderToTodayCardGap),
-              const Align(alignment: Alignment.center, child: _TodayCard()),
-              const SizedBox(height: AppDimensions.homeTodayCardToButtonGap),
-              _RecordCoffeeButton(
-                onPressed: () => context.go(AppRoute.record.path),
-              ),
-              const SizedBox(height: AppDimensions.homeButtonToRecentTitleGap),
-              _RecentCoffeeSection(coffees: coffees),
-            ],
+      child: AppPaperBackground(
+        child: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppDimensions.homeContentHorizontalPadding,
+              AppDimensions.homeContentTopPadding,
+              AppDimensions.homeContentHorizontalPadding,
+              AppDimensions.homeContentBottomPadding,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const _HomeHeader(),
+                const SizedBox(height: AppDimensions.homeHeaderToTodayCardGap),
+                const Align(alignment: Alignment.center, child: _TodayCard()),
+                const SizedBox(height: AppDimensions.homeTodayCardToButtonGap),
+                _RecordCoffeeButton(
+                  onPressed: () => context.go(AppRoute.record.path),
+                ),
+                const SizedBox(
+                  height: AppDimensions.homeButtonToRecentTitleGap,
+                ),
+                _RecentCoffeeSection(coffees: coffees),
+              ],
+            ),
           ),
         ),
       ),
@@ -108,11 +114,14 @@ class _TodayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formattedSentence = AiPromptFormatter.lineBreakAfterComma(
+      HomeAiCopy.sentence,
+    );
+
     return SizedBox(
       width: AppDimensions.homeTodayCardWidth,
       height: AppDimensions.homeTodayCardHeight,
-      child: AiCandyGlassCard(
-        radius: AppRadius.todayCard,
+      child: LiquidGlassPromptCard(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
             AppDimensions.homeTodayCardPaddingLeft,
@@ -120,40 +129,20 @@ class _TodayCard extends StatelessWidget {
             AppDimensions.homeTodayCardPaddingRight,
             AppDimensions.homeTodayCardPaddingBottom,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                width: AppDimensions.homeTodayCardCopyWidth,
-                height: AppDimensions.homeTodayCardCopyHeight,
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      top: AppDimensions.homeTodayCardTextTop,
-                    ),
-                    child: Text(
-                      HomeAiCopy.sentence,
-                      style: AppTypography.todayCardSentence,
-                    ),
-                  ),
+          child: SizedBox(
+            height: AppDimensions.homeTodayCardCopyHeight,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: AppDimensions.homeTodayCardTextTop,
+                ),
+                child: TypingPromptText(
+                  text: formattedSentence,
+                  style: AppTypography.todayCardSentence,
                 ),
               ),
-              const SizedBox(width: AppDimensions.homeTodayCardInternalGap),
-              Container(
-                width: AppDimensions.homeCoffeeVisualBubble,
-                height: AppDimensions.homeCoffeeVisualBubble,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: AppColors.coffeeVisualSurface,
-                  shape: BoxShape.circle,
-                ),
-                child: SvgPicture.asset(
-                  'assets/images/home/latte_placeholder.svg',
-                  width: AppDimensions.homeCoffeeVisualWidth,
-                  height: AppDimensions.homeCoffeeVisualHeight,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -168,7 +157,12 @@ class _RecordCoffeeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PrimaryActionButton(label: '记录一杯', onPressed: onPressed);
+    return Center(
+      child: SizedBox(
+        width: AppDimensions.homeRecordButtonWidth,
+        child: PrimaryActionButton(label: '记录一杯', onPressed: onPressed),
+      ),
+    );
   }
 }
 
@@ -218,26 +212,16 @@ class _RecentCoffeeEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: AppDimensions.homeCoffeeCardWidth,
-      height: AppDimensions.homeCoffeeCardHeight,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.outline),
-        borderRadius: AppRadius.cardBorder,
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.homeCardShadow,
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: const Text(
-        '还没有记录，今天从第一杯开始。',
-        textAlign: TextAlign.center,
-        style: AppTypography.coffeeCardMeta,
+      height: 42,
+      child: const Align(
+        alignment: Alignment.bottomCenter,
+        child: Text(
+          '还没有记录，今天从第一杯开始。',
+          textAlign: TextAlign.center,
+          style: AppTypography.homeEmptyHint,
+        ),
       ),
     );
   }
@@ -426,12 +410,12 @@ class _RecentCoffeeTile extends StatelessWidget {
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                border: Border.all(color: AppColors.outline),
+                color: AppColors.paperSurface,
+                border: Border.all(color: AppColors.paperSurfaceBorder),
                 borderRadius: AppRadius.cardBorder,
                 boxShadow: const [
                   BoxShadow(
-                    color: AppColors.homeCardShadow,
+                    color: AppColors.paperSurfaceShadow,
                     blurRadius: 18,
                     offset: Offset(0, 8),
                   ),

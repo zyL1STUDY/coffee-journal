@@ -10,6 +10,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/app_paper_background.dart';
 import '../../../shared/widgets/latte_glass_card.dart';
 import '../../record/application/coffee_record_repository.dart';
 import '../../record/domain/coffee_record.dart';
@@ -47,8 +48,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: AppColors.background,
+    return AppPaperBackground(
       child: SizedBox(
         width: AppDimensions.profileContentWidth,
         height: AppDimensions.profileContentHeight,
@@ -690,32 +690,36 @@ class _ProfileDetailScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SizedBox(
-          width: AppDimensions.mobileViewportWidth,
-          height: AppDimensions.mobileViewportHeight,
-          child: SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(
-              AppDimensions.profileDetailHorizontalPadding,
-              AppDimensions.profileDetailTopPadding,
-              AppDimensions.profileDetailHorizontalPadding,
-              32,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _ProfileDetailHeader(title: title),
-                const SizedBox(
-                  height: AppDimensions.profileDetailHeaderToContentGap,
-                ),
-                for (var index = 0; index < children.length; index++) ...[
-                  children[index],
-                  if (index != children.length - 1)
-                    const SizedBox(height: AppDimensions.profileDetailCardGap),
+      backgroundColor: AppColors.homeMistBackground,
+      body: AppPaperBackground(
+        child: SafeArea(
+          child: SizedBox(
+            width: AppDimensions.mobileViewportWidth,
+            height: AppDimensions.mobileViewportHeight,
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                AppDimensions.profileDetailHorizontalPadding,
+                AppDimensions.profileDetailTopPadding,
+                AppDimensions.profileDetailHorizontalPadding,
+                32,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _ProfileDetailHeader(title: title),
+                  const SizedBox(
+                    height: AppDimensions.profileDetailHeaderToContentGap,
+                  ),
+                  for (var index = 0; index < children.length; index++) ...[
+                    children[index],
+                    if (index != children.length - 1)
+                      const SizedBox(
+                        height: AppDimensions.profileDetailCardGap,
+                      ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
@@ -787,10 +791,10 @@ class _ProfileTextField extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.latteGlassHighlight,
+            color: AppColors.paperSurface,
             borderRadius: BorderRadius.circular(AppRadius.memoryNote),
             border: Border.all(
-              color: AppColors.latteGlassBorder.withAlpha(120),
+              color: AppColors.paperSurfaceBorder.withAlpha(150),
             ),
           ),
           child: TextField(
@@ -1052,7 +1056,7 @@ class _MediumWidgetPreview extends StatelessWidget {
       height: AppDimensions.profileWidgetMediumHeight,
       decoration: _widgetStageDecoration(),
       child: Stack(
-        clipBehavior: Clip.none,
+        clipBehavior: Clip.hardEdge,
         children: [
           Positioned(
             left: AppDimensions.profileWidgetMediumCardLeft,
@@ -1371,5 +1375,5 @@ class _WidgetAddButton extends StatelessWidget {
 }
 
 BoxDecoration _widgetStageDecoration() {
-  return const BoxDecoration(color: AppColors.background);
+  return const BoxDecoration(color: AppColors.paperSurface);
 }

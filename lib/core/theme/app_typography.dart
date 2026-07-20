@@ -75,6 +75,15 @@ class AppTypography {
     fontFamilyFallback: fontFamilyFallback,
   );
 
+  static const homeEmptyHint = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w300,
+    height: 18 / 13,
+    letterSpacing: 0,
+    color: AppColors.textMuted,
+    fontFamilyFallback: fontFamilyFallback,
+  );
+
   static const homeCoffeeAction = TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w500,
