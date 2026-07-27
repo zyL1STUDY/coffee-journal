@@ -8,7 +8,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
+import '../application/coffee_photo_assets.dart';
 import '../../home/presentation/home_page.dart';
+import 'coffee_photo_image.dart';
 
 class RecordFlowDismissController {
   Future<void> Function()? _dismiss;
@@ -533,7 +535,18 @@ class RecordSaveButton extends StatelessWidget {
 }
 
 class RecordDiscardDialog extends StatelessWidget {
-  const RecordDiscardDialog({super.key});
+  const RecordDiscardDialog({
+    this.title,
+    this.body,
+    this.continueLabel = '继续记录',
+    this.discardLabel = '放弃',
+    super.key,
+  });
+
+  final String? title;
+  final String? body;
+  final String continueLabel;
+  final String discardLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -556,22 +569,26 @@ class RecordDiscardDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('放弃这次记录？', style: AppTypography.recordDialogTitle),
-            const SizedBox(height: 8),
-            const Text(
-              '已经填写的内容不会保存。',
-              textAlign: TextAlign.center,
-              style: AppTypography.recordDialogBody,
-            ),
-            const SizedBox(height: 20),
+            if (title != null) ...[
+              Text(title!, style: AppTypography.recordDialogTitle),
+              if (body != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  body!,
+                  textAlign: TextAlign.center,
+                  style: AppTypography.recordDialogBody,
+                ),
+              ],
+              const SizedBox(height: 20),
+            ],
             _RecordDiscardAction(
-              label: '继续记录',
+              label: continueLabel,
               isPrimary: true,
               onTap: () => Navigator.of(context).pop(false),
             ),
             const SizedBox(height: AppDimensions.recordDiscardDialogActionGap),
             _RecordDiscardAction(
-              label: '放弃',
+              label: discardLabel,
               isPrimary: false,
               onTap: () => Navigator.of(context).pop(true),
             ),
@@ -643,14 +660,17 @@ class _RecordDiscardActionState extends State<_RecordDiscardAction> {
 }
 
 class RecordStickerPreview extends StatelessWidget {
-  const RecordStickerPreview({this.onChangeTap, super.key});
+  const RecordStickerPreview({this.photoUrl, this.onChangeTap, super.key});
 
-  static const assetPath = 'assets/images/home/coffee_sticker.png';
+  static const assetPath = CoffeePhotoAssets.fallbackStickerPath;
 
+  final String? photoUrl;
   final VoidCallback? onChangeTap;
 
   @override
   Widget build(BuildContext context) {
+    final previewPath = photoUrl ?? assetPath;
+
     return SizedBox(
       width: AppDimensions.recordContentWidth,
       height: AppDimensions.recordPhotoPreviewHeight,
@@ -693,10 +713,14 @@ class RecordStickerPreview extends StatelessWidget {
                   ),
                 ),
                 Positioned.fill(
-                  child: Image.asset(
-                    assetPath,
-                    fit: BoxFit.contain,
-                    filterQuality: FilterQuality.high,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: buildCoffeePhotoImage(
+                      previewPath,
+                      fit: previewPath == assetPath
+                          ? BoxFit.contain
+                          : BoxFit.cover,
+                    ),
                   ),
                 ),
               ],

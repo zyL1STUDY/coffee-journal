@@ -1,9 +1,28 @@
+import 'dart:typed_data';
+
 import 'package:coffee_journal/app/coffee_journal_app.dart';
+import 'package:coffee_journal/features/record/application/coffee_photo_assets.dart';
+import 'package:coffee_journal/features/record/application/coffee_cutout_service.dart';
+import 'package:coffee_journal/features/record/application/coffee_photo_picker.dart';
+import 'package:coffee_journal/features/record/application/coffee_photo_storage.dart';
+import 'package:coffee_journal/features/record/application/coffee_record_repository.dart';
+import 'package:coffee_journal/features/record/application/coffee_record_storage.dart';
+import 'package:coffee_journal/features/record/domain/coffee_record.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
+  Widget appWithFakePhotoPicker() {
+    return ProviderScope(
+      overrides: [
+        coffeePhotoPickerProvider.overrideWithValue(_FakeCoffeePhotoPicker()),
+      ],
+      child: const CoffeeJournalApp(),
+    );
+  }
+
   Future<void> saveBrandRecord(
     WidgetTester tester, {
     String name = '测试拿铁',
@@ -18,6 +37,73 @@ void main() {
     await tester.tap(find.text('保存这一杯'));
     await tester.pumpAndSettle();
   }
+
+  test('coffee records survive a repository restart', () async {
+    final storage = _FakeCoffeeRecordStorage();
+    final firstContainer = ProviderContainer(
+      overrides: [coffeeRecordStorageProvider.overrideWithValue(storage)],
+    );
+    addTearDown(firstContainer.dispose);
+
+    firstContainer
+        .read(coffeeRecordRepositoryProvider.notifier)
+        .save(
+          const CoffeeRecordDraft(
+            sourceType: CoffeeSourceType.brand,
+            sourceName: '瑞幸',
+            drinkName: '持久化拿铁',
+          ),
+        );
+    await Future<void>.delayed(Duration.zero);
+
+    final secondContainer = ProviderContainer(
+      overrides: [coffeeRecordStorageProvider.overrideWithValue(storage)],
+    );
+    addTearDown(secondContainer.dispose);
+
+    expect(secondContainer.read(coffeeRecordRepositoryProvider), isEmpty);
+    await Future<void>.delayed(Duration.zero);
+
+    final restoredRecords = secondContainer.read(
+      coffeeRecordRepositoryProvider,
+    );
+    expect(restoredRecords, hasLength(1));
+    expect(restoredRecords.first.drinkName, '持久化拿铁');
+    expect(restoredRecords.first.isDeleted, isFalse);
+  });
+
+  test('coffee records update when cutout processing succeeds', () async {
+    final storage = _FakeCoffeeRecordStorage();
+    final container = ProviderContainer(
+      overrides: [
+        coffeeRecordStorageProvider.overrideWithValue(storage),
+        coffeeCutoutServiceProvider.overrideWithValue(
+          _FakeCoffeeCutoutService(),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final record = container
+        .read(coffeeRecordRepositoryProvider.notifier)
+        .save(
+          const CoffeeRecordDraft(
+            sourceType: CoffeeSourceType.cafe,
+            sourceName: '街角咖啡',
+            photoUrl: 'data:image/jpeg;base64,coffee',
+          ),
+        );
+
+    expect(record.cutoutStatus, CutoutStatus.processing);
+    await Future<void>.delayed(Duration.zero);
+
+    final updatedRecord = container
+        .read(coffeeRecordRepositoryProvider.notifier)
+        .findById(record.id)!;
+    expect(updatedRecord.cutoutStatus, CutoutStatus.success);
+    expect(updatedRecord.cutoutPhotoUrl, 'data:image/png;base64,cutout');
+    expect(updatedRecord.displayPhotoUrl, 'data:image/png;base64,cutout');
+  });
 
   testWidgets('renders navigation and home foundation', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: CoffeeJournalApp()));
@@ -208,7 +294,10 @@ void main() {
     await tester.tap(find.text('×'));
     await tester.pumpAndSettle();
 
-    expect(find.text('放弃这次记录？'), findsOneWidget);
+    expect(find.text('放弃这次记录？'), findsNothing);
+    expect(find.text('已经填写的内容不会保存。'), findsNothing);
+    expect(find.text('继续记录'), findsOneWidget);
+    expect(find.text('放弃'), findsOneWidget);
 
     await tester.tap(find.text('继续记录'));
     await tester.pumpAndSettle();
@@ -225,7 +314,7 @@ void main() {
     expect(find.text('选择品牌'), findsNothing);
   });
 
-  testWidgets('photo preview appears at top after adding a photo', (
+  testWidgets('canceling edits says original record will be kept', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -234,6 +323,40 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(const ProviderScope(child: CoffeeJournalApp()));
+
+    await saveBrandRecord(tester, name: '原来的拿铁');
+
+    await tester.drag(find.text('原来的拿铁'), const Offset(-160, 0));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('编辑').first);
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).first, '修改中的拿铁');
+    await tester.tap(find.text('×'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('放弃本次修改？'), findsNothing);
+    expect(find.text('未保存的修改不会生效，原记录会保留。'), findsNothing);
+    expect(find.text('继续修改'), findsOneWidget);
+    expect(find.text('放弃修改'), findsOneWidget);
+
+    await tester.tap(find.text('放弃修改'));
+    await tester.pump(const Duration(milliseconds: 260));
+    await tester.pumpAndSettle();
+
+    expect(find.text('原来的拿铁'), findsOneWidget);
+    expect(find.text('修改中的拿铁'), findsNothing);
+  });
+
+  testWidgets('photo preview appears at top after adding a photo', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(appWithFakePhotoPicker());
 
     await tester.tap(find.text('记录一杯'));
     await tester.pumpAndSettle();
@@ -331,6 +454,52 @@ void main() {
     expect(find.text('测试拿铁'), findsNothing);
     expect(find.text(_currentMonthName()), findsOneWidget);
   });
+}
+
+class _FakeCoffeeRecordStorage implements CoffeeRecordStorage {
+  List<CoffeeRecord> records = [];
+
+  @override
+  Future<List<CoffeeRecord>> readRecords() async {
+    return [...records];
+  }
+
+  @override
+  Future<void> writeRecords(List<CoffeeRecord> records) async {
+    this.records = [...records];
+  }
+}
+
+class _FakeCoffeeCutoutService extends CoffeeCutoutService {
+  _FakeCoffeeCutoutService()
+    : super(apiKey: 'test-key', storage: _FakeCoffeePhotoStorage());
+
+  @override
+  Future<String?> createCutout(String photoUrl) async {
+    return 'data:image/png;base64,cutout';
+  }
+}
+
+class _FakeCoffeePhotoPicker extends CoffeePhotoPicker {
+  _FakeCoffeePhotoPicker()
+    : super(picker: ImagePicker(), storage: _FakeCoffeePhotoStorage());
+
+  @override
+  Future<String?> pickFromGallery() async {
+    return CoffeePhotoAssets.fallbackStickerPath;
+  }
+}
+
+class _FakeCoffeePhotoStorage implements CoffeePhotoStorage {
+  @override
+  Future<String> savePickedPhoto(XFile photo) async {
+    return CoffeePhotoAssets.fallbackStickerPath;
+  }
+
+  @override
+  Future<String> saveCutoutPhoto(Uint8List bytes) async {
+    return 'data:image/png;base64,cutout';
+  }
 }
 
 Offset _todayMemoryTapOffset() {

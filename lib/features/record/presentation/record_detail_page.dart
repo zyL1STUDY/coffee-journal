@@ -6,6 +6,7 @@ import '../../../core/router/app_route.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
+import '../application/coffee_photo_picker.dart';
 import '../application/coffee_record_repository.dart';
 import '../domain/coffee_record.dart';
 import 'record_flow_widgets.dart';
@@ -24,6 +25,7 @@ class _RecordDetailPageState extends ConsumerState<RecordDetailPage> {
   final _dismissController = RecordFlowDismissController();
   late String _sourceName;
   late bool _hasPhoto;
+  String? _photoUrl;
   late final TextEditingController _drinkController;
   late final TextEditingController _noteController;
   late final TextEditingController _cafeController;
@@ -37,7 +39,8 @@ class _RecordDetailPageState extends ConsumerState<RecordDetailPage> {
               .read(coffeeRecordRepositoryProvider.notifier)
               .findById(widget.editId!);
     _sourceName = editingRecord?.sourceName ?? '';
-    _hasPhoto = editingRecord?.photoUrl != null;
+    _photoUrl = editingRecord?.photoUrl;
+    _hasPhoto = _photoUrl != null;
     _drinkController = TextEditingController();
     _drinkController.text = editingRecord?.drinkName ?? '';
     _noteController = TextEditingController();
@@ -77,7 +80,7 @@ class _RecordDetailPageState extends ConsumerState<RecordDetailPage> {
             ),
             const SizedBox(height: AppDimensions.recordHeaderToContentGap),
             if (_hasPhoto) ...[
-              RecordStickerPreview(onChangeTap: _addPhoto),
+              RecordStickerPreview(photoUrl: _photoUrl, onChangeTap: _addPhoto),
               const SizedBox(height: AppDimensions.recordPhotoPreviewBottomGap),
             ],
             _SourceSection(
@@ -153,7 +156,7 @@ class _RecordDetailPageState extends ConsumerState<RecordDetailPage> {
       sourceName: sourceName,
       drinkName: _drinkController.text,
       note: _noteController.text,
-      photoUrl: _hasPhoto ? RecordStickerPreview.assetPath : null,
+      photoUrl: _photoUrl,
     );
     final repository = ref.read(coffeeRecordRepositoryProvider.notifier);
 
@@ -166,8 +169,16 @@ class _RecordDetailPageState extends ConsumerState<RecordDetailPage> {
     context.go(AppRoute.home.path);
   }
 
-  void _addPhoto() {
+  Future<void> _addPhoto() async {
+    final photoUrl = await ref
+        .read(coffeePhotoPickerProvider)
+        .pickFromGallery();
+    if (photoUrl == null || !mounted) {
+      return;
+    }
+
     setState(() {
+      _photoUrl = photoUrl;
       _hasPhoto = true;
     });
   }
@@ -185,7 +196,14 @@ class _RecordDetailPageState extends ConsumerState<RecordDetailPage> {
       barrierColor: Colors.black.withValues(alpha: 0.18),
       transitionDuration: const Duration(milliseconds: 180),
       pageBuilder: (context, animation, secondaryAnimation) {
-        return const Center(child: RecordDiscardDialog());
+        return Center(
+          child: widget.editId == null
+              ? const RecordDiscardDialog()
+              : const RecordDiscardDialog(
+                  continueLabel: '继续修改',
+                  discardLabel: '放弃修改',
+                ),
+        );
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         final curved = CurvedAnimation(

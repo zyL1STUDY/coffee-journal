@@ -14,8 +14,10 @@ import '../../../shared/widgets/app_paper_background.dart';
 import '../../../shared/widgets/latte_glass_card.dart';
 import '../../../shared/widgets/liquid_glass_prompt_card.dart';
 import '../../../shared/widgets/typing_prompt_text.dart';
+import '../../record/application/coffee_photo_assets.dart';
 import '../../record/application/coffee_record_repository.dart';
 import '../../record/domain/coffee_record.dart';
+import '../../record/presentation/coffee_photo_image.dart';
 import '../../record/presentation/record_flow_widgets.dart';
 
 class JournalPage extends ConsumerStatefulWidget {
@@ -509,7 +511,9 @@ class _JournalDayCell extends StatelessWidget {
                 child: _CoffeeDropIn(
                   animation: dropAnimation,
                   order: memory!.order,
-                  child: const _CalendarCoffeeSticker(),
+                  child: _CalendarCoffeeSticker(
+                    photoUrl: memory!.record.displayPhotoUrl,
+                  ),
                 ),
               ),
             if (hasMemory && memory!.count > 1)
@@ -540,9 +544,11 @@ class _JournalDayCell extends StatelessWidget {
 }
 
 class _CalendarCoffeeSticker extends StatelessWidget {
-  const _CalendarCoffeeSticker();
+  const _CalendarCoffeeSticker({this.photoUrl});
 
-  static const _assetPath = 'assets/images/home/coffee_sticker.png';
+  static const _assetPath = CoffeePhotoAssets.fallbackStickerPath;
+
+  final String? photoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -584,10 +590,9 @@ class _CalendarCoffeeSticker extends StatelessWidget {
               ),
             ),
             child: ClipOval(
-              child: Image.asset(
-                _assetPath,
+              child: buildCoffeePhotoImage(
+                photoUrl ?? _assetPath,
                 fit: BoxFit.cover,
-                filterQuality: FilterQuality.high,
               ),
             ),
           ),
@@ -715,7 +720,7 @@ class _CoffeeMemorySheet extends ConsumerWidget {
                 onTap: () => Navigator.of(context).pop(),
               ),
             ),
-            const Positioned(
+            Positioned(
               left:
                   (AppDimensions.mobileViewportWidth -
                       AppDimensions.memoryStickerWidth) /
@@ -723,7 +728,7 @@ class _CoffeeMemorySheet extends ConsumerWidget {
               top: AppDimensions.memoryStickerTop,
               width: AppDimensions.memoryStickerWidth,
               height: AppDimensions.memoryStickerHeight,
-              child: _MemoryCoffeeSticker(),
+              child: _MemoryCoffeeSticker(photoUrl: record.displayPhotoUrl),
             ),
             Positioned(
               left: 30,
@@ -816,10 +821,14 @@ class _CoffeeMemorySheet extends ConsumerWidget {
 }
 
 class _MemoryCoffeeSticker extends StatelessWidget {
-  const _MemoryCoffeeSticker();
+  const _MemoryCoffeeSticker({this.photoUrl});
+
+  final String? photoUrl;
 
   @override
   Widget build(BuildContext context) {
+    final imagePath = photoUrl ?? CoffeePhotoAssets.fallbackStickerPath;
+
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -842,7 +851,7 @@ class _MemoryCoffeeSticker extends StatelessWidget {
                     BlendMode.srcIn,
                   ),
                   child: Image.asset(
-                    'assets/images/home/coffee_sticker.png',
+                    CoffeePhotoAssets.fallbackStickerPath,
                     fit: BoxFit.contain,
                     filterQuality: FilterQuality.high,
                   ),
@@ -852,10 +861,11 @@ class _MemoryCoffeeSticker extends StatelessWidget {
           ),
         ),
         Positioned.fill(
-          child: Image.asset(
-            'assets/images/home/coffee_sticker.png',
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.high,
+          child: buildCoffeePhotoImage(
+            imagePath,
+            fit: imagePath == CoffeePhotoAssets.fallbackStickerPath
+                ? BoxFit.contain
+                : BoxFit.cover,
           ),
         ),
       ],
