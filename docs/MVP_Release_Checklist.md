@@ -44,7 +44,7 @@ MVP 验收时优先检查：
 4. Coffee Memory 展示保存的真实内容。
 5. Coffee Memory 删除前有二次确认，删除后记录从 Home / Journal 中移除。
 6. 首访无记录时不显示假数据。
-7. GitHub README 能清楚说明项目做了什么、当前完成到哪里、哪些仍在 Roadmap。
+7. GitHub README 能清楚说明项目做了什么、当前完成到哪里、下一步计划是什么。
 
 ## 当前验证命令
 

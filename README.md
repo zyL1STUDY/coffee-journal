@@ -1,91 +1,74 @@
 # Coffee Journal
 
-Coffee Journal 是一款 Flutter 移动端 App MVP。它不是咖啡摄入量追踪器，而是一款以咖啡为入口的 AI 咖啡日记：记录每一杯咖啡，也记录日常生活里的轻量记忆。
+Coffee Journal 是一款以咖啡为入口的 AI 日记 App MVP。
+
+它不是咖啡摄入量追踪器，而是帮助用户快速记录一杯咖啡，并在之后通过月历和 Coffee Memory 回看日常记忆的移动端产品。
 
 > More than coffee. More than memories.
 
-## 项目定位
+## Demo
 
-Coffee Journal 面向喜欢咖啡、但不想被复杂表单打断的人。MVP 的目标是验证一条核心体验：用户可以快速留下今天这一杯，并在之后通过月历和 Coffee Memory 回看这段日常记忆。
+- Demo：待补充
+- 当前状态：Flutter 移动端 MVP / Portfolio-ready prototype
 
-产品原则：
+## 项目介绍
 
-- 记录应该轻松，而不是完成任务。
-- AI 是轻量观察者，不是聊天机器人。
-- 咖啡是入口，记忆是目的地。
-- 移动端优先，默认以 iPhone 尺寸设计和验证。
+Coffee Journal 面向喜欢咖啡、但不想被复杂表单打断的人。
 
-## MVP 已完成内容
+用户可以从 Home 快速记录一杯咖啡，选择来源、补充饮品信息，并在 Journal 中通过月历回看每一天的咖啡记忆。AI 不作为聊天机器人出现，而是像轻量观察者一样，为每次记录生成一句温柔的记忆提示。
 
-| 模块 | 当前状态 |
-|---|---|
-| Home / 今天 | 动态日期、Today Card、记录入口、最近咖啡、首访空状态 |
-| Record Flow | 来源选择、连锁品牌 / 独立咖啡店 / 自己做三类记录表单、可选照片入口、保存后刷新首页 |
-| Journal | 当月咖啡月历、日期贴纸、多杯 Badge、统计摘要、空状态文案 |
-| Coffee Memory | Bottom Sheet 详情，展示真实记录内容、AI Message、备注、编辑入口、删除二次确认 |
-| Profile / 我的 | 个人信息、语言、数据与隐私、关于页面、静态隐私政策 / 用户协议 |
-| Desktop Widget | iOS Medium Widget preview / prototype，展示最近一杯咖啡；不作为完整发布能力声明 |
+已完成的 MVP 范围：
 
-## 当前边界
+- Home：今日问候、AI 一句话、记录入口、最近咖啡
+- Record Flow：咖啡来源选择、三类记录表单、保存/编辑/删除
+- Journal：月历视图、日期贴纸、多杯记录 Badge、Coffee Memory 详情
+- Profile：个人信息、语言、数据与隐私、关于页面
+- Widget：iOS Medium Widget preview / prototype
 
-这个仓库展示的是 **MVP 交互版 / Portfolio-ready work in progress**。当前重点是产品结构、体验闭环、UI 还原和工程组织。
+当前项目重点展示产品定义、AI 协作工作流、Flutter MVP 实现和基础测试覆盖。真实相机、持久化数据库、云端同步和生产 AI 接入仍属于后续迭代范围。
 
-尚未作为完整上线能力声明的内容：
+## 我的角色
 
-- 本地持久化数据库仍待接入；当前记录仓库为内存状态管理。
-- 真实相机 / 相册流程仍待接入；当前照片入口为 MVP 预留交互。
-- OpenAI / Supabase / 云端图片存储尚未接入生产链路。
-- iOS Widget 已有 preview / extension 基础，但还需要真机或模拟器完整验证。
-- App Store / TestFlight 发布准备仍在后续 Roadmap。
+AI 产品经理 + Flutter MVP Builder
+
+我在这个项目中使用 AI-assisted product workflow 完成从产品定义到可运行原型的完整闭环：
+
+- 定义产品定位和 MVP 边界
+- 拆解用户流程和页面结构
+- 迭代视觉方向和交互细节
+- 使用 Figma 整理核心页面、组件语言和交付结构
+- 将设计语言转化为 Flutter 组件和 Theme Token
+- 用测试覆盖关键用户路径
+- 维护开发日志和交付文档，形成可追踪的项目工作流
+
+## AI 产品经理工作流
+
+这个项目的重点不是只展示代码，而是展示一个 AI 产品经理如何把想法推进成可验证的 MVP。
+
+工作流包括：
+
+1. 产品定位：明确 Coffee Journal 不是数据追踪工具，而是日常记忆产品。
+2. MVP 定义：限定 Home、Record Flow、Journal、Profile 和 Widget preview 的首版范围。
+3. 用户流程：从“记录一杯”到“回看 Coffee Memory”建立完整闭环。
+4. 设计迭代：围绕温暖、轻量、低打扰的方向，多轮调整 UI 语言。
+5. Figma 交付：整理最终页面、组件结构和视觉规范，作为开发对齐依据。
+6. AI 功能设计：将 AI 放在一句轻量观察文案中，而不是做成聊天入口。
+7. 工程实现：用 Flutter / Riverpod / GoRouter 搭建可运行 MVP。
+8. 验证收尾：通过 `flutter analyze`、`flutter test`、commit history 和 Release Checklist 记录阶段结果。
+
+更完整的工作流说明见：[AI 产品经理工作流](docs/AI_Product_Workflow.md)。
+
+MVP 验收边界见：[MVP Release Checklist](docs/MVP_Release_Checklist.md)。
 
 ## 技术栈
 
 - Flutter / Dart
+- Figma
 - Riverpod
 - GoRouter
-- 自定义 Theme Token 与组件
+- 自定义 Theme Token 与共享 UI 组件
 - WidgetKit preview / iOS Extension prototype
 - flutter_test
-
-已预留但未完成生产接入：
-
-- Isar 本地数据库
-- image_picker
-- OpenAI Responses API
-- Supabase / Storage
-
-## 项目结构
-
-```text
-lib/
-  app/                    App 入口
-  core/                   路由、主题、配置、常量
-  features/
-    home/                 今天页
-    record/               记录咖啡流程
-    journal/              月历与 Coffee Memory
-    profile/              我的与设置页面
-    widgets/              桌面组件同步支持
-  shared/                 共享 UI 组件
-
-docs/                     产品、设计、技术与交付文档
-test/                     核心 Widget 测试
-ios/CoffeeJournalWidget/  iOS Widget preview / prototype
-```
-
-## 交付文档
-
-建议从 [docs/README.md](docs/README.md) 开始阅读。核心文档：
-
-- [01 项目概览](docs/01_项目概览.md)
-- [02 MVP 功能清单](docs/02_MVP功能清单.md)
-- [03 用户流程](docs/03_用户流程.md)
-- [04 页面说明](docs/04_页面说明.md)
-- [05 数据模型](docs/05_数据模型.md)
-- [07 设计规范](docs/07_设计规范.md)
-- [08 AI 功能说明](docs/08_AI功能说明.md)
-- [12 业务规则](docs/12_业务规则.md)
-- [MVP Release Checklist](docs/MVP_Release_Checklist.md)
 
 ## 本地运行
 
@@ -96,39 +79,22 @@ flutter test
 flutter run
 ```
 
-如果需要环境变量：
+如需环境变量：
 
 ```bash
 cp .env.example .env
 ```
 
-MVP 当前不依赖真实 AI 或 Supabase key，`.env` 可以保持为空或使用占位值。
+当前 MVP 不依赖真实 API key，`.env` 可以保持为空。
 
-## 当前验证
+## 项目状态
 
-当前核心 Widget 测试覆盖：
+Coffee Journal 当前是作品集展示用 MVP 原型，已完成核心体验闭环和主要 UI polish。
 
-- Home 首访空状态
-- Profile 与二级页面
-- Record Flow 保存与取消
-- 照片入口预览
-- 最近咖啡删除
-- Journal 打开 Coffee Memory
-- Coffee Memory 覆盖底部导航
+下一步计划：
 
-最新本地检查：
-
-```bash
-flutter analyze
-flutter test
-```
-
-## Roadmap
-
-下一阶段重点：
-
-- 接入本地持久化，替换内存 Mock Repository。
-- 接入真实相机 / 相册选择。
-- 接入保存时 AI Message 生成与失败兜底。
-- 完成 iOS Widget 真机 / 模拟器验证。
-- 准备 TestFlight / App Store 发布资料。
+- 接入本地持久化数据库
+- 接入真实相机 / 相册
+- 接入保存时 AI Message 生成
+- 验证 iOS Widget 真机体验
+- 准备 TestFlight / App Store 发布材料
