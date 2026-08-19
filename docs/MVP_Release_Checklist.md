@@ -1,6 +1,6 @@
 # MVP Release Checklist
 
-更新时间：2026-07-15
+更新时间：2026-08-19
 
 ## 交付定位
 
@@ -16,20 +16,23 @@ Coffee Journal 当前版本定位为：
 |---|---|---|
 | Home / 今天 | 已完成 MVP | 动态日期、Today Card、记录入口、最近咖啡、空状态 |
 | Record Flow | 已完成 MVP | 来源选择、三类记录表单、保存后刷新首页 |
-| Photo Entry | MVP 预留 | 当前为添加照片预览交互，真实系统相机 / 相册待接入 |
+| Photo Entry | 已完成 MVP 基础 | 已接入相册选择、照片预览和本地照片地址保存；真实拍照入口和权限失败状态待补齐 |
 | Journal | 已完成 MVP | 当月记录月历、贴纸、Badge、统计、Summary、空状态 |
 | Coffee Memory | 已完成 MVP | 展示真实记录、AI Message、备注、编辑入口、删除二次确认 |
 | Profile | 已完成 MVP | 个人信息、语言、数据与隐私、关于、静态政策页面 |
 | Desktop Widget | Preview / Prototype | iOS Medium Widget preview 与基础 extension，不声明完整发布能力 |
-| Widget Tests | 已覆盖核心路径 | Home、Profile、Record、Photo Entry、Journal、Coffee Memory |
+| Local Persistence | 已完成 MVP 基础 | iOS / 桌面端使用本地文档目录，Web 预览使用 localStorage |
+| Photo Cutout Pipeline | 已完成 MVP 预留 | 已有 `REMOVE_BG_API_KEY` 配置、后台处理状态和失败兜底 |
+| Widget Tests | 已覆盖核心路径 | Home、Profile、Record、Photo Entry、Journal、Coffee Memory、本地持久化、抠图成功路径 |
 
 ## 当前边界
 
 | 项目 | 当前状态 | 后续计划 |
 |---|---|---|
-| 本地持久化 | 暂为内存 Repository | 接入 Isar 或其他本地数据库 |
-| 相机 / 相册 | 已预留入口 | 接入 image_picker 与权限失败状态 |
-| AI Message | 当前使用兜底文案 | 接入 OpenAI Responses API，保存时生成并固定 |
+| 本地持久化 | 已有轻量本地存储 | 后续可迁移到 Isar / SQLite / Supabase，不影响现有 UI |
+| 相机 / 相册 | 相册已接入，拍照待接入 | 补齐拍照入口、权限失败状态和真实设备验证 |
+| 照片抠图 | 已有 remove.bg 预留管线 | 配置真实 API key 后验证成功 / 失败 / 无 key 三种状态 |
+| AI Message | 当前使用兜底文案 | 接入 OpenAI Responses API，保存时生成并固定；失败不阻塞保存 |
 | 云同步 | 未接入 | Future：Supabase / Storage |
 | 桌面组件 | preview / prototype | 完成 App Group、URL Scheme、真机 / 模拟器验证 |
 | 发布准备 | 未完成 | 准备 App Icon、Launch Screen、TestFlight、商店截图 |
@@ -55,8 +58,8 @@ flutter test
 
 ## 下一阶段建议
 
-1. 接入本地持久化，替换内存状态管理。
-2. 接入真实拍照 / 相册选择。
-3. 接入 AI Message 生成与失败兜底。
-4. 完成 iOS Widget 真机 / 模拟器验证。
-5. 准备 TestFlight 或 App Store 发布材料。
+1. 更新过期任务文档，让项目状态与代码保持一致。
+2. 补齐真实拍照入口、相册 / 相机权限失败状态和设备验证。
+3. 接入 AI Message 生成，并保持失败不阻塞保存。
+4. 验证 remove.bg 抠图管线和 iOS Widget 真机 / 模拟器体验。
+5. 准备 App Icon、Launch Screen、Demo 录屏、TestFlight 或 App Store 发布材料。

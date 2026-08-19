@@ -60,6 +60,8 @@ AI 产品经理 + Flutter MVP Builder
 
 MVP 验收边界见：[MVP Release Checklist](docs/MVP_Release_Checklist.md)。
 
+项目配置、环境变量和本地存储说明见：[Project Config](docs/Project_Config.md)。
+
 ## 技术栈
 
 - Flutter / Dart
