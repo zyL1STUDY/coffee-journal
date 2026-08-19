@@ -8,8 +8,9 @@ Coffee Journal 是一款以咖啡为入口的 AI 日记 App MVP。
 
 ## Demo
 
-- Demo：待补充
 - 当前状态：Flutter 移动端 MVP / Portfolio-ready prototype
+- Demo 截图：准备中，计划展示 Home、Record Flow、Journal、Coffee Memory 和 Profile
+- 本地预览：`flutter run -d web-server --web-hostname 127.0.0.1 --web-port 5180`
 
 ## 项目介绍
 
@@ -24,8 +25,11 @@ Coffee Journal 面向喜欢咖啡、但不想被复杂表单打断的人。
 - Journal：月历视图、日期贴纸、多杯记录 Badge、Coffee Memory 详情
 - Profile：个人信息、语言、数据与隐私、关于页面
 - Widget：iOS Medium Widget preview / prototype
+- Local Persistence：本地轻量持久化，Web 预览使用 localStorage
+- Photo Entry：相册选择、照片预览、本地照片地址保存
+- Photo Cutout Pipeline：预留 remove.bg 抠图管线，失败不阻塞记录
 
-当前项目重点展示产品定义、AI 协作工作流、Flutter MVP 实现和基础测试覆盖。真实相机、持久化数据库、云端同步和生产 AI 接入仍属于后续迭代范围。
+当前项目重点展示产品定义、AI 协作工作流、Flutter MVP 实现、本地数据闭环和基础测试覆盖。真实拍照入口、生产 AI 接入、云端同步和 App Store 发布准备仍属于后续迭代范围。
 
 ## 我的角色
 
@@ -55,6 +59,15 @@ AI 产品经理 + Flutter MVP Builder
 6. AI 功能设计：将 AI 放在一句轻量观察文案中，而不是做成聊天入口。
 7. 工程实现：用 Flutter / Riverpod / GoRouter 搭建可运行 MVP。
 8. 验证收尾：通过 `flutter analyze`、`flutter test`、commit history 和 Release Checklist 记录阶段结果。
+
+## AI Product Thinking
+
+Coffee Journal 的 AI 设计重点不是增加一个聊天入口，而是把 AI 放在用户已有流程中：
+
+- AI 以一句轻量观察文案出现，降低打扰感。
+- 保存记录不能依赖 AI 成功，失败时使用兜底文案。
+- AI 输出需要短、温柔、具体，服务于 Coffee Memory，而不是制造任务感。
+- 下一阶段会接入真实 AI Message generation，并补充轻量 evaluation 来评估输出质量。
 
 更完整的工作流说明见：[AI 产品经理工作流](docs/AI_Product_Workflow.md)。
 
@@ -93,10 +106,16 @@ cp .env.example .env
 
 Coffee Journal 当前是作品集展示用 MVP 原型，已完成核心体验闭环和主要 UI polish。
 
+当前已验证：
+
+- `flutter analyze`
+- `flutter test`
+
 下一步计划：
 
-- 接入本地持久化数据库
-- 接入真实相机 / 相册
-- 接入保存时 AI Message 生成
+- 补齐 Demo 截图 / 录屏
+- 接入真实拍照入口和权限失败状态
+- 接入保存时 AI Message 生成，并保持失败兜底
+- 补充 AI Evaluation 轻量报告
 - 验证 iOS Widget 真机体验
 - 准备 TestFlight / App Store 发布材料
