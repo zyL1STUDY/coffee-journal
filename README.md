@@ -14,12 +14,12 @@ Coffee Journal 是一款以咖啡为入口的 AI 日记 App。
 
 | Home | Record Flow | Journal |
 |---|---|---|
-| <img src="docs/assets/demo/cropped/home-ios-simulator.png" width="180" alt="Coffee Journal Home screen running on iOS Simulator"> | <img src="docs/assets/demo/cropped/record-detail.jpg" width="180" alt="Coffee Journal record flow screen"> | <img src="docs/assets/demo/cropped/journal.jpg" width="180" alt="Coffee Journal journal screen"> |
+| <img src="docs/assets/demo/cropped/home-ios-simulator.png" width="180" alt="Coffee Journal Home screen running on iOS Simulator"> | <img src="docs/assets/demo/cropped/record-source-ios-simulator.png" width="180" alt="Coffee Journal record source sheet running on iOS Simulator"> | <img src="docs/assets/demo/cropped/journal-ios-simulator.png" width="180" alt="Coffee Journal journal screen running on iOS Simulator"> |
 | 今日问候、AI 提示、记录入口和最近咖啡 | 选择来源、补充饮品信息并保存记录 | 用月历和咖啡贴纸回看本月记录 |
 
 | Coffee Memory | Profile |
 |---|---|
-| <img src="docs/assets/demo/cropped/coffee-memory.jpg" width="180" alt="Coffee Journal coffee memory screen"> | <img src="docs/assets/demo/cropped/profile.jpg" width="180" alt="Coffee Journal profile screen"> |
+| <img src="docs/assets/demo/cropped/coffee-memory-ios-simulator.png" width="180" alt="Coffee Journal coffee memory sheet running on iOS Simulator"> | <img src="docs/assets/demo/cropped/profile-ios-simulator.png" width="180" alt="Coffee Journal profile screen running on iOS Simulator"> |
 | 查看单杯咖啡的 AI 文案、来源和记录内容 | 个人信息、语言、隐私和 Widget 入口 |
 
 ## 项目介绍
