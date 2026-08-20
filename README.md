@@ -14,29 +14,32 @@ Coffee Journal 是一款以咖啡为入口的 AI 日记 App MVP。
 | Home | Record Flow | Journal |
 |---|---|---|
 | <img src="docs/assets/demo/cropped/home.jpg" width="180" alt="Coffee Journal Home screen"> | <img src="docs/assets/demo/cropped/record-detail.jpg" width="180" alt="Coffee Journal record flow screen"> | <img src="docs/assets/demo/cropped/journal.jpg" width="180" alt="Coffee Journal journal screen"> |
+| 今日问候、AI 提示、记录入口和最近咖啡 | 选择来源、补充饮品信息并保存记录 | 用月历和咖啡贴纸回看本月记录 |
 
 | Coffee Memory | Profile |
 |---|---|
 | <img src="docs/assets/demo/cropped/coffee-memory.jpg" width="180" alt="Coffee Journal coffee memory screen"> | <img src="docs/assets/demo/cropped/profile.jpg" width="180" alt="Coffee Journal profile screen"> |
+| 查看单杯咖啡的 AI 文案、来源和记录内容 | 个人信息、语言、隐私和 Widget 入口 |
 
 ## 项目介绍
 
 Coffee Journal 面向喜欢咖啡、但不想被复杂表单打断的人。
 
-用户可以从 Home 快速记录一杯咖啡，选择来源、补充饮品信息，并在 Journal 中通过月历回看每一天的咖啡记忆。AI 不作为聊天机器人出现，而是像轻量观察者一样，为每次记录生成一句温柔的记忆提示。
+用户可以从 Home 快速记录一杯咖啡，并在 Journal 中通过月历回看每一天的咖啡记忆。这个项目的核心问题是：如何让用户留下一个日常片段，同时不让记录行为变成任务？
 
-已完成的 MVP 范围：
+产品判断：咖啡只是入口，真正被保存下来的是地点、心情、节奏和生活里的小记忆。AI 不作为聊天机器人出现，而是像轻量观察者一样，为每次记录生成一句温柔的记忆提示。
 
-- Home：今日问候、AI 一句话、记录入口、最近咖啡
-- Record Flow：咖啡来源选择、三类记录表单、保存/编辑/删除
-- Journal：月历视图、日期贴纸、多杯记录 Badge、Coffee Memory 详情
-- Profile：个人信息、语言、数据与隐私、关于页面
-- Widget：iOS Medium Widget preview / prototype
-- Local Persistence：本地轻量持久化，Web 预览使用 localStorage
-- Photo Entry：相册选择、照片预览、本地照片地址保存
-- Photo Cutout Pipeline：预留 remove.bg 抠图管线，失败不阻塞记录
+已完成的 MVP 范围：Home、Record Flow、Journal、Coffee Memory、Profile、iOS Medium Widget prototype，以及本地持久化、相册选择和照片抠图预留管线。
 
-当前项目重点展示产品定义、AI 协作工作流、Flutter MVP 实现、本地数据闭环和基础测试覆盖。真实拍照入口、生产 AI 接入、云端同步和 App Store 发布准备仍属于后续迭代范围。
+真实拍照入口、生产 AI 接入、云端同步和 App Store 发布准备仍属于后续迭代范围。
+
+## 产品决策
+
+- 不做咖啡参数追踪：MVP 不强制填写烘焙度、咖啡因、冲煮比例等字段，避免把产品变成数据工具。
+- 不把 AI 做成独立 Tab：AI 嵌入在用户已有流程中，以一句轻量文案出现。
+- Journal 不是数据看板：月历和咖啡贴纸是视觉中心，统计只作为轻量辅助信息。
+- Coffee Memory 使用 Bottom Sheet：让回看记忆更像轻量动作，而不是跳转到沉重详情页。
+- 保存不依赖 AI 成功：记录保存是核心流程，AI 生成失败时使用兜底文案。
 
 ## 我的角色
 
@@ -54,27 +57,13 @@ AI 产品经理 + Flutter MVP Builder
 
 ## AI 产品经理工作流
 
-这个项目的重点不是只展示代码，而是展示一个 AI 产品经理如何把想法推进成可验证的 MVP。
-
-工作流包括：
-
-1. 产品定位：明确 Coffee Journal 不是数据追踪工具，而是日常记忆产品。
-2. MVP 定义：限定 Home、Record Flow、Journal、Profile 和 Widget preview 的首版范围。
-3. 用户流程：从“记录一杯”到“回看 Coffee Memory”建立完整闭环。
-4. 设计迭代：围绕温暖、轻量、低打扰的方向，多轮调整 UI 语言。
-5. Figma 交付：整理最终页面、组件结构和视觉规范，作为开发对齐依据。
-6. AI 功能设计：将 AI 放在一句轻量观察文案中，而不是做成聊天入口。
-7. 工程实现：用 Flutter / Riverpod / GoRouter 搭建可运行 MVP。
-8. 验证收尾：通过 `flutter analyze`、`flutter test`、commit history 和 Release Checklist 记录阶段结果。
+我希望通过这个项目展示自己在 AI 产品方向的完整实践能力：从产品定位、用户流程、Figma 设计迭代，到 Flutter 实现、测试验证和 GitHub 交付文档。
 
 ## AI Product Thinking
 
-Coffee Journal 的 AI 设计重点不是增加一个聊天入口，而是把 AI 放在用户已有流程中：
+Coffee Journal 的 AI 设计重点不是增加聊天入口，而是把 AI 放在用户已有流程中：保存一杯咖啡后，生成一句短、温柔、低打扰的 Coffee Memory 文案。
 
-- AI 以一句轻量观察文案出现，降低打扰感。
-- 保存记录不能依赖 AI 成功，失败时使用兜底文案。
-- AI 输出需要短、温柔、具体，服务于 Coffee Memory，而不是制造任务感。
-- 下一阶段会接入真实 AI Message generation，并补充轻量 evaluation 来评估输出质量。
+AI Message 计划使用来源类型、来源名称、饮品名、备注和记录时间作为输入。输出会随 Coffee Record 固定保存，避免每次打开时重新生成导致记忆内容不稳定。AI 失败时使用兜底文案，不阻塞保存流程。
 
 更完整的工作流说明见：[AI 产品经理工作流](docs/AI_Product_Workflow.md)。
 
@@ -91,6 +80,12 @@ MVP 验收边界见：[MVP Release Checklist](docs/MVP_Release_Checklist.md)。
 - 自定义 Theme Token 与共享 UI 组件
 - WidgetKit preview / iOS Extension prototype
 - flutter_test
+
+## 技术实现亮点
+
+- 完成 Home → Record Flow → Journal → Coffee Memory 的完整记录闭环，并支持编辑、删除和本地持久化。
+- 使用 Riverpod + GoRouter + Feature-first 结构组织 Flutter MVP，配合自定义 Theme Token 还原移动端视觉。
+- 预留 AI Message、照片地址、抠图状态等字段，并用 Widget Tests 覆盖核心路径、本地恢复和抠图成功状态。
 
 ## 本地运行
 
@@ -120,7 +115,7 @@ Coffee Journal 当前是作品集展示用 MVP 原型，已完成核心体验闭
 
 下一步计划：
 
-- 补齐 Demo 截图 / 录屏
+- 准备 30-60 秒 Demo 录屏
 - 接入真实拍照入口和权限失败状态
 - 接入保存时 AI Message 生成，并保持失败兜底
 - 补充 AI Evaluation 轻量报告
