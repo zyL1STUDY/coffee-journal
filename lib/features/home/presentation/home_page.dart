@@ -75,10 +75,8 @@ class HomePage extends ConsumerWidget {
               children: [
                 const _HomeHeader(),
                 const SizedBox(height: AppDimensions.homeHeaderToTodayCardGap),
-                const Align(alignment: Alignment.center, child: _TodayCard()),
-                const SizedBox(height: AppDimensions.homeTodayCardToButtonGap),
-                _RecordCoffeeButton(
-                  onPressed: () => context.go(AppRoute.record.path),
+                _HomePrimaryPanel(
+                  onRecordPressed: () => context.go(AppRoute.record.path),
                 ),
                 const SizedBox(
                   height: AppDimensions.homeButtonToRecentTitleGap,
@@ -86,6 +84,38 @@ class HomePage extends ConsumerWidget {
                 _RecentCoffeeSection(coffees: coffees),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HomeBackdropPreview extends StatelessWidget {
+  const HomeBackdropPreview({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: AppDimensions.homeContentWidth,
+      height: AppDimensions.homeContentHeight,
+      child: AppPaperBackground(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            AppDimensions.homeContentHorizontalPadding,
+            AppDimensions.homeContentTopPadding,
+            AppDimensions.homeContentHorizontalPadding,
+            AppDimensions.homeContentBottomPadding,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _HomeHeader(),
+              SizedBox(height: AppDimensions.homeHeaderToTodayCardGap),
+              _HomePrimaryPanel(),
+              SizedBox(height: AppDimensions.homeButtonToRecentTitleGap),
+              Text('最近的咖啡', style: AppTypography.homeRecentSectionTitle),
+            ],
           ),
         ),
       ),
@@ -105,6 +135,26 @@ class _HomeHeader extends StatelessWidget {
         const SizedBox(height: 6),
         Text(_formatTodayLabel(DateTime.now()), style: AppTypography.date),
       ],
+    );
+  }
+}
+
+class _HomePrimaryPanel extends StatelessWidget {
+  const _HomePrimaryPanel({this.onRecordPressed});
+
+  final VoidCallback? onRecordPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: AppDimensions.homePrimaryPanelWidth,
+      child: Column(
+        children: [
+          const _TodayCard(),
+          const SizedBox(height: AppDimensions.homeTodayCardToButtonGap),
+          _RecordCoffeeButton(onPressed: onRecordPressed),
+        ],
+      ),
     );
   }
 }
@@ -153,7 +203,7 @@ class _TodayCard extends StatelessWidget {
 class _RecordCoffeeButton extends StatelessWidget {
   const _RecordCoffeeButton({required this.onPressed});
 
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {

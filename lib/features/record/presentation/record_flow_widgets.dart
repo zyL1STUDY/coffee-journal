@@ -92,7 +92,7 @@ class _RecordOverlayScaffoldState extends State<RecordOverlayScaffold> {
     return Scaffold(
       backgroundColor: AppColors.homeMistBackground,
       body: SizedBox(
-        width: AppDimensions.mobileViewportWidth,
+        width: double.infinity,
         height: AppDimensions.mobileViewportHeight,
         child: Stack(
           children: [
@@ -120,6 +120,7 @@ class _RecordOverlayScaffoldState extends State<RecordOverlayScaffold> {
               duration: AppDimensions.recordDismissDuration,
               curve: Curves.easeInCubic,
               left: 0,
+              right: 0,
               top: _isDismissing
                   ? AppDimensions.mobileViewportHeight + 20
                   : widget.sheetTop,
@@ -151,7 +152,7 @@ class RecordSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: AppDimensions.recordSheetWidth,
+      width: double.infinity,
       height: height,
       padding: const EdgeInsets.fromLTRB(
         AppDimensions.recordSheetHorizontalPadding,
@@ -771,7 +772,7 @@ class _RecordHomeBackdrop extends StatelessWidget {
     return const IgnorePointer(
       child: Stack(
         children: [
-          HomePage(),
+          HomeBackdropPreview(),
           Positioned(
             left: 0,
             top: AppDimensions.homeContentHeight,

@@ -1,6 +1,6 @@
 # Coffee Journal
 
-Coffee Journal 是一款以咖啡为入口的 AI 日记 App MVP。
+Coffee Journal 是一款以咖啡为入口的 AI 日记 App。
 
 它不是咖啡摄入量追踪器，而是帮助用户快速记录一杯咖啡，并在之后通过月历和 Coffee Memory 回看日常记忆的移动端产品。
 
@@ -8,12 +8,13 @@ Coffee Journal 是一款以咖啡为入口的 AI 日记 App MVP。
 
 ## Demo
 
-- 当前状态：Flutter 移动端 MVP / Portfolio-ready prototype
-- 本地预览：`flutter run -d web-server --web-hostname 127.0.0.1 --web-port 5180`
+- 当前状态：核心 MVP 已完成 / iOS Simulator verified prototype
+- iOS 预览：`flutter run -d <iPhone Simulator>`
+- Web 预览：`flutter run -d web-server --web-hostname 127.0.0.1 --web-port 5180`
 
 | Home | Record Flow | Journal |
 |---|---|---|
-| <img src="docs/assets/demo/cropped/home.jpg" width="180" alt="Coffee Journal Home screen"> | <img src="docs/assets/demo/cropped/record-detail.jpg" width="180" alt="Coffee Journal record flow screen"> | <img src="docs/assets/demo/cropped/journal.jpg" width="180" alt="Coffee Journal journal screen"> |
+| <img src="docs/assets/demo/cropped/home-ios-simulator.png" width="180" alt="Coffee Journal Home screen running on iOS Simulator"> | <img src="docs/assets/demo/cropped/record-detail.jpg" width="180" alt="Coffee Journal record flow screen"> | <img src="docs/assets/demo/cropped/journal.jpg" width="180" alt="Coffee Journal journal screen"> |
 | 今日问候、AI 提示、记录入口和最近咖啡 | 选择来源、补充饮品信息并保存记录 | 用月历和咖啡贴纸回看本月记录 |
 
 | Coffee Memory | Profile |
@@ -29,9 +30,9 @@ Coffee Journal 面向喜欢咖啡、但不想被复杂表单打断的人。
 
 产品判断：咖啡只是入口，真正被保存下来的是地点、心情、节奏和生活里的小记忆。AI 不作为聊天机器人出现，而是像轻量观察者一样，为每次记录生成一句温柔的记忆提示。
 
-已完成的 MVP 范围：Home、Record Flow、Journal、Coffee Memory、Profile、iOS Medium Widget prototype，以及本地持久化、相册选择和照片抠图预留管线。
+已完成的 MVP 范围：Home、Record Flow、Journal、Coffee Memory、Profile、iOS Medium Widget prototype，以及本地持久化、相册选择、AI Message 最小闭环和照片抠图预留管线。
 
-真实拍照入口、生产 AI 接入、云端同步和 App Store 发布准备仍属于后续迭代范围。
+真实拍照入口、AI Evaluation、云端同步和 App Store 发布准备仍属于后续迭代范围。
 
 ## 产品决策
 
@@ -63,7 +64,7 @@ AI 产品经理 + Flutter MVP Builder
 
 Coffee Journal 的 AI 设计重点不是增加聊天入口，而是把 AI 放在用户已有流程中：保存一杯咖啡后，生成一句短、温柔、低打扰的 Coffee Memory 文案。
 
-AI Message 计划使用来源类型、来源名称、饮品名、备注和记录时间作为输入。输出会随 Coffee Record 固定保存，避免每次打开时重新生成导致记忆内容不稳定。AI 失败时使用兜底文案，不阻塞保存流程。
+AI Message 使用来源类型、来源名称、饮品名、备注和记录时间作为输入。输出会随 Coffee Record 固定保存，避免每次打开时重新生成导致记忆内容不稳定。AI 失败时使用兜底文案，不阻塞保存流程。
 
 更完整的工作流说明见：[AI 产品经理工作流](docs/AI_Product_Workflow.md)。
 
@@ -85,7 +86,7 @@ MVP 验收边界见：[MVP Release Checklist](docs/MVP_Release_Checklist.md)。
 
 - 完成 Home → Record Flow → Journal → Coffee Memory 的完整记录闭环，并支持编辑、删除和本地持久化。
 - 使用 Riverpod + GoRouter + Feature-first 结构组织 Flutter MVP，配合自定义 Theme Token 还原移动端视觉。
-- 预留 AI Message、照片地址、抠图状态等字段，并用 Widget Tests 覆盖核心路径、本地恢复和抠图成功状态。
+- 接入保存时 AI Message 生成，并用 Widget Tests 覆盖核心路径、本地恢复、AI 成功 / 失败和抠图成功状态。
 
 ## 本地运行
 
@@ -102,11 +103,11 @@ flutter run
 cp .env.example .env
 ```
 
-当前 MVP 不依赖真实 API key，`.env` 可以保持为空。
+没有 API key 时，记录流程仍可保存并使用兜底 AI 文案；配置 `AI_API_KEY` 后，保存记录时会生成真实 Coffee Memory 文案。
 
 ## 项目状态
 
-Coffee Journal 当前是作品集展示用 MVP 原型，已完成核心体验闭环和主要 UI polish。
+Coffee Journal 当前已完成作品集展示所需的核心 MVP，并开始在 iOS Simulator 中做真实运行验证和体验打磨。
 
 当前已验证：
 
@@ -117,7 +118,7 @@ Coffee Journal 当前是作品集展示用 MVP 原型，已完成核心体验闭
 
 - 准备 30-60 秒 Demo 录屏
 - 接入真实拍照入口和权限失败状态
-- 接入保存时 AI Message 生成，并保持失败兜底
 - 补充 AI Evaluation 轻量报告
+- 优化 AI Prompt 和输出质量标准
 - 验证 iOS Widget 真机体验
 - 准备 TestFlight / App Store 发布材料

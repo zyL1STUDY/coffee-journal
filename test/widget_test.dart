@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:coffee_journal/app/coffee_journal_app.dart';
 import 'package:coffee_journal/features/record/application/coffee_photo_assets.dart';
+import 'package:coffee_journal/features/record/application/coffee_ai_message_service.dart';
 import 'package:coffee_journal/features/record/application/coffee_cutout_service.dart';
 import 'package:coffee_journal/features/record/application/coffee_photo_picker.dart';
 import 'package:coffee_journal/features/record/application/coffee_photo_storage.dart';
@@ -11,6 +12,7 @@ import 'package:coffee_journal/features/record/domain/coffee_record.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 void main() {
@@ -104,6 +106,74 @@ void main() {
     expect(updatedRecord.cutoutPhotoUrl, 'data:image/png;base64,cutout');
     expect(updatedRecord.displayPhotoUrl, 'data:image/png;base64,cutout');
   });
+
+  test('coffee records update when AI message generation succeeds', () async {
+    final storage = _FakeCoffeeRecordStorage();
+    final container = ProviderContainer(
+      overrides: [
+        coffeeRecordStorageProvider.overrideWithValue(storage),
+        coffeeAiMessageServiceProvider.overrideWithValue(
+          _FakeCoffeeAiMessageService('这杯拿铁，替今天留下一点温柔。'),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final record = container
+        .read(coffeeRecordRepositoryProvider.notifier)
+        .save(
+          const CoffeeRecordDraft(
+            sourceType: CoffeeSourceType.brand,
+            sourceName: '瑞幸',
+            drinkName: '生椰拿铁',
+          ),
+        );
+
+    expect(record.aiStatus, AiStatus.loading);
+    expect(record.aiMessage, CoffeeRecordRepository.fallbackAiMessage);
+    await Future<void>.delayed(Duration.zero);
+
+    final updatedRecord = container
+        .read(coffeeRecordRepositoryProvider.notifier)
+        .findById(record.id)!;
+    expect(updatedRecord.aiStatus, AiStatus.success);
+    expect(updatedRecord.aiMessage, '这杯拿铁，替今天留下一点温柔。');
+    expect(updatedRecord.aiCreatedAt, isNotNull);
+  });
+
+  test(
+    'coffee records keep fallback message when AI generation fails',
+    () async {
+      final storage = _FakeCoffeeRecordStorage();
+      final container = ProviderContainer(
+        overrides: [
+          coffeeRecordStorageProvider.overrideWithValue(storage),
+          coffeeAiMessageServiceProvider.overrideWithValue(
+            _FakeCoffeeAiMessageService(null),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final record = container
+          .read(coffeeRecordRepositoryProvider.notifier)
+          .save(
+            const CoffeeRecordDraft(
+              sourceType: CoffeeSourceType.homemade,
+              sourceName: '手冲',
+            ),
+          );
+
+      expect(record.aiStatus, AiStatus.loading);
+      await Future<void>.delayed(Duration.zero);
+
+      final updatedRecord = container
+          .read(coffeeRecordRepositoryProvider.notifier)
+          .findById(record.id)!;
+      expect(updatedRecord.aiStatus, AiStatus.failed);
+      expect(updatedRecord.aiMessage, CoffeeRecordRepository.fallbackAiMessage);
+    },
+  );
 
   testWidgets('renders navigation and home foundation', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: CoffeeJournalApp()));
@@ -477,6 +547,18 @@ class _FakeCoffeeCutoutService extends CoffeeCutoutService {
   @override
   Future<String?> createCutout(String photoUrl) async {
     return 'data:image/png;base64,cutout';
+  }
+}
+
+class _FakeCoffeeAiMessageService extends CoffeeAiMessageService {
+  _FakeCoffeeAiMessageService(this.message)
+    : super(apiKey: 'test-key', model: 'test-model', client: http.Client());
+
+  final String? message;
+
+  @override
+  Future<String?> generateMessage(CoffeeRecord record) async {
+    return message;
   }
 }
 

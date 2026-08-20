@@ -23,7 +23,8 @@ Coffee Journal 当前版本定位为：
 | Desktop Widget | Preview / Prototype | iOS Medium Widget preview 与基础 extension，不声明完整发布能力 |
 | Local Persistence | 已完成 MVP 基础 | iOS / 桌面端使用本地文档目录，Web 预览使用 localStorage |
 | Photo Cutout Pipeline | 已完成 MVP 预留 | 已有 `REMOVE_BG_API_KEY` 配置、后台处理状态和失败兜底 |
-| Widget Tests | 已覆盖核心路径 | Home、Profile、Record、Photo Entry、Journal、Coffee Memory、本地持久化、抠图成功路径 |
+| AI Message | 已完成 MVP 基础 | 保存记录后后台生成一句 Coffee Memory 文案；失败时保留兜底文案 |
+| Widget Tests | 已覆盖核心路径 | Home、Profile、Record、Photo Entry、Journal、Coffee Memory、本地持久化、AI 成功 / 失败、抠图成功路径 |
 
 ## 当前边界
 
@@ -32,7 +33,7 @@ Coffee Journal 当前版本定位为：
 | 本地持久化 | 已有轻量本地存储 | 后续可迁移到 Isar / SQLite / Supabase，不影响现有 UI |
 | 相机 / 相册 | 相册已接入，拍照待接入 | 补齐拍照入口、权限失败状态和真实设备验证 |
 | 照片抠图 | 已有 remove.bg 预留管线 | 配置真实 API key 后验证成功 / 失败 / 无 key 三种状态 |
-| AI Message | 当前使用兜底文案 | 接入 OpenAI Responses API，保存时生成并固定；失败不阻塞保存 |
+| AI Message | 已接入 OpenAI Responses API 最小闭环 | 补充 AI Evaluation、Prompt 优化和真实样例验证 |
 | 云同步 | 未接入 | Future：Supabase / Storage |
 | 桌面组件 | preview / prototype | 完成 App Group、URL Scheme、真机 / 模拟器验证 |
 | 发布准备 | 未完成 | 准备 App Icon、Launch Screen、TestFlight、商店截图 |
@@ -60,6 +61,6 @@ flutter test
 
 1. 更新过期任务文档，让项目状态与代码保持一致。
 2. 补齐真实拍照入口、相册 / 相机权限失败状态和设备验证。
-3. 接入 AI Message 生成，并保持失败不阻塞保存。
+3. 补充 AI Evaluation，验证 AI Message 的语气、具体性和幻觉风险。
 4. 验证 remove.bg 抠图管线和 iOS Widget 真机 / 模拟器体验。
 5. 准备 App Icon、Launch Screen、Demo 录屏、TestFlight 或 App Store 发布材料。

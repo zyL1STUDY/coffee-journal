@@ -24,6 +24,8 @@ class TypingPromptText extends StatefulWidget {
 
 class _TypingPromptTextState extends State<TypingPromptText>
     with SingleTickerProviderStateMixin {
+  static final Set<String> _animatedTexts = <String>{};
+
   late AnimationController _typingController;
   late Animation<int> _visibleCharacters;
   Timer? _typingDelayTimer;
@@ -63,9 +65,18 @@ class _TypingPromptTextState extends State<TypingPromptText>
     _visibleCharacters = StepTween(begin: 0, end: widget.text.length).animate(
       CurvedAnimation(parent: _typingController, curve: Curves.easeOutCubic),
     );
+
+    if (_animatedTexts.contains(widget.text)) {
+      _typingController.value = 1;
+    }
   }
 
   void _startAfterDelay() {
+    if (_animatedTexts.contains(widget.text)) {
+      return;
+    }
+
+    _animatedTexts.add(widget.text);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _typingDelayTimer = Timer(widget.startDelay, () {
         if (!mounted) {

@@ -5,7 +5,7 @@ class AppEnvironment {
 
   static String get appEnv => _maybeGet('APP_ENV') ?? 'development';
   static bool get debug => (_maybeGet('DEBUG') ?? 'true') == 'true';
-  static String get aiModel => _maybeGet('AI_MODEL') ?? 'gpt-5.5-mini';
+  static String get aiModel => _maybeGet('AI_MODEL') ?? 'gpt-5.6-luna';
   static String? get aiApiKey => _maybeGet('AI_API_KEY');
   static String? get removeBgApiKey => _maybeGet('REMOVE_BG_API_KEY');
   static String? get supabaseUrl => _maybeGet('SUPABASE_URL');

@@ -48,8 +48,8 @@ Public template variables:
 |---|---|---|
 | `APP_ENV` | App environment name, such as `development`. | No |
 | `DEBUG` | Enables local debug behavior. | No |
-| `AI_MODEL` | Placeholder model name for future AI message generation. | No |
-| `AI_API_KEY` | Future AI API key. Do not commit real keys. | No |
+| `AI_MODEL` | Model used for Coffee Memory AI Message generation. | No |
+| `AI_API_KEY` | Optional OpenAI API key for AI Message generation. Do not commit real keys. | No |
 | `REMOVE_BG_API_KEY` | Optional remove.bg key for MVP cutout processing. Do not commit real keys. | No |
 | `SUPABASE_URL` | Future Supabase project URL. | No |
 | `SUPABASE_ANON_KEY` | Future Supabase anon key. Do not commit real keys. | No |
@@ -66,7 +66,7 @@ Core dependencies:
 - `flutter_dotenv`: local environment configuration
 - `image_picker`: gallery image selection
 - `path_provider`: local app document directory
-- `http`: cutout API request pipeline
+- `http`: OpenAI Responses API and cutout API request pipelines
 - `web`: browser local storage support for Web preview
 - `flutter_svg`: SVG assets
 - `isar` / `isar_flutter_libs`: reserved local database dependency
@@ -109,6 +109,30 @@ Failure behavior:
 - Record saving never waits for cutout.
 - Cutout failure does not block the user.
 - The app keeps showing the original photo when cutout is unavailable.
+
+## AI Message
+
+Coffee records include an AI Message field for the one-sentence Coffee Memory copy.
+
+Flow:
+
+1. User saves a Coffee Record.
+2. The record is saved immediately with fallback copy.
+3. If `AI_API_KEY` is configured, the app calls the OpenAI Responses API in the background.
+4. Successful output is saved to `aiMessage` and marked as `success`.
+5. Failed or missing output keeps the fallback copy and marks the record as `failed`.
+
+AI fields:
+
+- `aiMessage`: generated or fallback Coffee Memory sentence
+- `aiStatus`: `idle`, `loading`, `success`, or `failed`
+- `aiCreatedAt`: AI Message generation timestamp
+
+Failure behavior:
+
+- Record saving never waits for AI generation.
+- AI failure does not block the user.
+- Generated copy is fixed on the Coffee Record instead of regenerated every time the memory opens.
 
 ## iOS Notes
 

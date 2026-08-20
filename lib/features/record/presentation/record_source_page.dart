@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/router/app_route.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_radius.dart';
-import '../../../core/theme/app_typography.dart';
 import 'record_flow_widgets.dart';
 
 class RecordSourcePage extends StatefulWidget {
@@ -34,15 +33,7 @@ class _RecordSourcePageState extends State<RecordSourcePage> {
             onBack: _dismissController.dismiss,
             onCancel: _dismissController.dismiss,
           ),
-          const SizedBox(height: AppDimensions.recordHeaderToContentGap),
-          const SizedBox(
-            width: 320,
-            child: Text(
-              '这杯咖啡来自哪里？选一个最贴近的场景。',
-              style: AppTypography.recordSubcopy,
-            ),
-          ),
-          const SizedBox(height: AppDimensions.recordSourceSubcopyToOptionsGap),
+          const SizedBox(height: AppDimensions.recordSourceHeaderToOptionsGap),
           RecordOptionRow(
             icon: '☕',
             label: '连锁品牌',

@@ -13,27 +13,27 @@ class AppTypography {
   ];
 
   static const greeting = TextStyle(
-    fontSize: 28,
-    fontWeight: FontWeight.w600,
-    height: 34 / 28,
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    height: 30 / 24,
     letterSpacing: 0,
     color: AppColors.textPrimary,
     fontFamilyFallback: fontFamilyFallback,
   );
 
   static const date = TextStyle(
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: FontWeight.w400,
-    height: 22 / 15,
+    height: 23 / 16,
     letterSpacing: 0,
     color: AppColors.textSecondary,
     fontFamilyFallback: fontFamilyFallback,
   );
 
   static const todayCardSentence = TextStyle(
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: FontWeight.w500,
-    height: 22 / 15,
+    height: 24 / 16,
     letterSpacing: 0,
     color: AppColors.aiPromptText,
     fontFamilyFallback: fontFamilyFallback,
@@ -49,9 +49,9 @@ class AppTypography {
   );
 
   static const homeRecentSectionTitle = TextStyle(
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: FontWeight.w600,
-    height: 24 / 18,
+    height: 26 / 20,
     letterSpacing: 0,
     color: AppColors.textPrimary,
     fontFamilyFallback: fontFamilyFallback,
@@ -59,17 +59,17 @@ class AppTypography {
 
   static const coffeeCardTitle = TextStyle(
     fontSize: 15,
-    fontWeight: FontWeight.w600,
-    height: 20 / 15,
+    fontWeight: FontWeight.w500,
+    height: 22 / 15,
     letterSpacing: 0,
     color: AppColors.textPrimary,
     fontFamilyFallback: fontFamilyFallback,
   );
 
   static const coffeeCardMeta = TextStyle(
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
-    height: 18 / 13,
+    height: 20 / 14,
     letterSpacing: 0,
     color: AppColors.textSecondary,
     fontFamilyFallback: fontFamilyFallback,
@@ -93,18 +93,18 @@ class AppTypography {
   );
 
   static const ctaPlus = TextStyle(
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: FontWeight.w500,
-    height: 26 / 22,
+    height: 28 / 24,
     letterSpacing: 0,
     color: AppColors.background,
     fontFamilyFallback: fontFamilyFallback,
   );
 
   static const ctaLabel = TextStyle(
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: FontWeight.w600,
-    height: 20 / 16,
+    height: 22 / 17,
     letterSpacing: 0,
     color: AppColors.background,
     fontFamilyFallback: fontFamilyFallback,
@@ -218,18 +218,18 @@ class AppTypography {
   );
 
   static const journalMonthTitle = TextStyle(
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: FontWeight.w700,
-    height: 34 / 26,
+    height: 30 / 24,
     letterSpacing: 0,
     color: AppColors.journalMonthLabel,
     fontFamilyFallback: fontFamilyFallback,
   );
 
   static const journalMonthSubtitle = TextStyle(
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: FontWeight.w700,
-    height: 34 / 26,
+    height: 30 / 24,
     letterSpacing: 0,
     color: AppColors.journalMonthLabel,
     fontFamilyFallback: fontFamilyFallback,

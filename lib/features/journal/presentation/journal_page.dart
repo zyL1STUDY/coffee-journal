@@ -678,7 +678,7 @@ class _CoffeeMemorySheet extends ConsumerWidget {
         : drinkName;
     final aiMessage = record.aiMessage?.trim().isNotEmpty == true
         ? record.aiMessage!.trim()
-        : '这杯咖啡已经安静地留在今天了。';
+        : CoffeeRecordRepository.fallbackAiMessage;
 
     return SizedBox(
       width: AppDimensions.mobileViewportWidth,

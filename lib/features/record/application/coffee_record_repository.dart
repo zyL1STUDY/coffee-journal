@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../widgets/application/coffee_widget_sync_service.dart';
 import '../domain/coffee_record.dart';
+import 'coffee_ai_message_service.dart';
 import 'coffee_cutout_service.dart';
 import 'coffee_record_storage.dart';
 import 'coffee_record_storage_impl.dart';
@@ -34,13 +35,17 @@ final coffeeRecordRepositoryProvider =
     );
 
 class CoffeeRecordRepository extends Notifier<List<CoffeeRecord>> {
+  static const fallbackAiMessage = '这杯咖啡已经安静地留在今天了。';
+
   late final CoffeeRecordStorage _storage;
   late final CoffeeCutoutService _cutoutService;
+  late final CoffeeAiMessageService _aiMessageService;
 
   @override
   List<CoffeeRecord> build() {
     _storage = ref.read(coffeeRecordStorageProvider);
     _cutoutService = ref.read(coffeeCutoutServiceProvider);
+    _aiMessageService = ref.read(coffeeAiMessageServiceProvider);
     unawaited(_loadRecords());
     CoffeeWidgetSyncService.syncLatest(null);
     return [];
@@ -60,13 +65,16 @@ class CoffeeRecordRepository extends Notifier<List<CoffeeRecord>> {
       photoUrl: photoUrl,
       cutoutStatus: _initialCutoutStatus(photoUrl),
       note: _normalizeOptional(draft.note),
-      aiMessage: '这杯咖啡已经安静地留在今天了。',
-      aiStatus: AiStatus.idle,
+      aiMessage: fallbackAiMessage,
+      aiStatus: _aiMessageService.canGenerate
+          ? AiStatus.loading
+          : AiStatus.idle,
     );
 
     state = _sortRecords([record, ...state]);
     CoffeeWidgetSyncService.syncLatest(record);
     unawaited(_persistRecords());
+    unawaited(_generateAiMessage(record.id));
     unawaited(_processCutout(record.id, photoUrl));
     return record;
   }
@@ -175,6 +183,40 @@ class CoffeeRecordRepository extends Notifier<List<CoffeeRecord>> {
           )
         else
           record,
+    ]);
+    CoffeeWidgetSyncService.syncLatest(_latestActiveRecord);
+    unawaited(_persistRecords());
+  }
+
+  Future<void> _generateAiMessage(String id) async {
+    if (!_aiMessageService.canGenerate) {
+      return;
+    }
+
+    final record = findById(id);
+    if (record == null) {
+      return;
+    }
+
+    final generatedMessage = await _aiMessageService.generateMessage(record);
+    if (!ref.mounted) {
+      return;
+    }
+
+    final now = DateTime.now();
+    state = _sortRecords([
+      for (final currentRecord in state)
+        if (currentRecord.id == id && !currentRecord.isDeleted)
+          currentRecord.copyWith(
+            updatedAt: now,
+            aiMessage: generatedMessage ?? fallbackAiMessage,
+            aiStatus: generatedMessage == null
+                ? AiStatus.failed
+                : AiStatus.success,
+            aiCreatedAt: now,
+          )
+        else
+          currentRecord,
     ]);
     CoffeeWidgetSyncService.syncLatest(_latestActiveRecord);
     unawaited(_persistRecords());
