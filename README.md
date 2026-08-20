@@ -9,8 +9,15 @@ Coffee Journal 是一款以咖啡为入口的 AI 日记 App MVP。
 ## Demo
 
 - 当前状态：Flutter 移动端 MVP / Portfolio-ready prototype
-- Demo 截图：准备中，计划展示 Home、Record Flow、Journal、Coffee Memory 和 Profile
 - 本地预览：`flutter run -d web-server --web-hostname 127.0.0.1 --web-port 5180`
+
+| Home | Record Flow | Journal |
+|---|---|---|
+| <img src="docs/assets/demo/cropped/home.jpg" width="180" alt="Coffee Journal Home screen"> | <img src="docs/assets/demo/cropped/record-detail.jpg" width="180" alt="Coffee Journal record flow screen"> | <img src="docs/assets/demo/cropped/journal.jpg" width="180" alt="Coffee Journal journal screen"> |
+
+| Coffee Memory | Profile |
+|---|---|
+| <img src="docs/assets/demo/cropped/coffee-memory.jpg" width="180" alt="Coffee Journal coffee memory screen"> | <img src="docs/assets/demo/cropped/profile.jpg" width="180" alt="Coffee Journal profile screen"> |
 
 ## 项目介绍
 
